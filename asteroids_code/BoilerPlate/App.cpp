@@ -1,7 +1,11 @@
 #include "App.hpp"
 #include <iostream>
 #include <algorithm>
+
 #include "palet.h"
+
+#include "player.hpp"
+#include "vector2.hpp"
 
 // OpenGL includes
 #include <GL/glew.h>
@@ -13,6 +17,7 @@ namespace Engine
 	const float DESIRED_FRAME_TIME = 1.0f / DESIRED_FRAME_RATE;
 	palet change;
 	color stats(0.1f, 0.1f, 0.15f, 1.0f);
+	player onway;
 
 	App::App(const std::string& title, const int width, const int height)
 		: m_title(title)
@@ -83,6 +88,19 @@ namespace Engine
 	{		
 		switch (keyBoardEvent.keysym.scancode)
 		{
+
+		case SDL_SCANCODE_W:
+			onway.move(vector2(0, 2));
+			break;
+		case SDL_SCANCODE_A:
+			onway.move(vector2(-2, 0));
+			break;
+		case SDL_SCANCODE_S:
+			onway.move(vector2(0, -2));
+			break;
+		case SDL_SCANCODE_D:
+			onway.move(vector2(2, 0));
+			break;
 		default:			
 			SDL_Log("%S was pressed.", keyBoardEvent.keysym.scancode);
 			break;
@@ -96,16 +114,16 @@ namespace Engine
 		case SDL_SCANCODE_ESCAPE:
 			OnExit();
 			break;
-		case SDL_SCANCODE_A:
+		case SDL_SCANCODE_C:
 			stats = change.bluescreen();
 			break;
-		case SDL_SCANCODE_S:
+		case SDL_SCANCODE_V:
 			stats = change.greenscreen();
 			break;
-		case SDL_SCANCODE_D:
+		case SDL_SCANCODE_X:
 			stats = change.redscreen();
 			break;
-		case SDL_SCANCODE_F:
+		case SDL_SCANCODE_Z:
 			stats = change.darkbluescreen();
 			break;
 		default:
@@ -142,13 +160,8 @@ namespace Engine
 		glClearColor(stats.getred(), stats.getgreen(), stats.getblue(), stats.getalpha());
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glBegin(GL_LINE_LOOP);
-		glVertex2f(50.0, 50.0);
-		glVertex2f(50.0, -50.0);
-		glVertex2f(-50.0, -50.0);
-		glVertex2f(-50.0, 50.0);
-		glEnd();
-
+		onway.render();
+		
 		SDL_GL_SwapWindow(m_mainWindow);
 	}
 
