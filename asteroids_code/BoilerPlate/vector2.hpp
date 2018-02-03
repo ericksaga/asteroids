@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cmath>
-
 struct vector2 {
 	
 	//members

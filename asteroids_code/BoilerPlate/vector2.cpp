@@ -1,5 +1,7 @@
 #include "vector2.hpp"
 
+#include <cmath>
+
 vector2::vector2()
 {
 	x = 0.0f;
@@ -35,7 +37,7 @@ float vector2::squaredlength()
 
 float vector2::normalize()
 {
-	Length();
+	length = Length();
 	float scale = 1.0f / length;
 	x *= scale;
 	y *= scale;
