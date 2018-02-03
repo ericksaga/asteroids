@@ -61,11 +61,14 @@ vector2 vector2::operator*(const vector2& val)
 
 vector2 vector2::operator/(const vector2& val)
 {
-	if (val.x != 0 && val.y != 0)
+	if (val.x == 0 || val.y == 0)
 	{
-		return vector2(x / val.x, y / val.y);
+		throw "Division by zero is not defined!";
 	}
-	return 0;
+
+
+	return vector2(x / val.x, y / val.y);
+	
 }
 
 bool vector2::operator==(const vector2& val)
@@ -111,11 +114,13 @@ vector2& vector2::operator*=(const vector2& val)
 
 vector2& vector2::operator/=(const vector2& val)
 {
-	if (val.x != 0 && val.y != 0)
+	if (val.x == 0 || val.y == 0)
 	{
-		x = x / val.x;
-		y = y / val.y;
-	} 
+		throw "Division by zero is not defined!";
+	}
+	x = x / val.x;
+	y = y / val.y;
+	 
 	return *this;
 }
 
