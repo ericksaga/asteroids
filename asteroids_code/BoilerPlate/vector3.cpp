@@ -63,6 +63,11 @@ vector3 vector3::operator*(const vector3& val)
 
 vector3 vector3::operator/(const vector3& val)
 {
+	if (val.x == 0 || val.y == 0 || val.z == 0)
+	{
+		throw "Division by 0 is not defined";
+	}
+
 	return vector3(x / val.x, y / val.y, z / val.z);
 }
 
