@@ -9,9 +9,21 @@ void player::render()
 {
 	//put a thrusting figure (like a fire) at the back of the spaceship
 	glBegin(GL_LINE_LOOP);
-	glVertex2f(0.0, 50.0);
-	glVertex2f(-30.0, -20.0);
-	glVertex2f(30.0, -20.0);
+	glVertex2f(0.0, 30.0);
+	glVertex2f(-10.0, 0.0);
+	glVertex2f(-25.0, -10.0);
+	glVertex2f(-35.0, -25.0);
+	glVertex2f(-25.0, -25.0);
+	glVertex2f(-10.0, -20.0);
+	glVertex2f(-5.0, -10.0);
+	glVertex2f(-2.5, -25.0);
+	glVertex2f(2.5, -25.0);
+	glVertex2f(5.0, -10.0);
+	glVertex2f(10.0, -20.0);
+	glVertex2f(25.0, -25.0);
+	glVertex2f(35.0, -25.0);
+	glVertex2f(25.0, -10.0);
+	glVertex2f(10.0, 0.0);
 	glEnd();
 }
 
@@ -43,8 +55,8 @@ void player::update()
 
 void player::moveforward()
 {
-	glTranslatef(0.0, 2.5, 0.0);
-	origin += vector2(2.5 * cos(angle / 57.3), 2.5 * sin(angle / 57.3));
+	glTranslatef(0.0, 5.0, 0.0);
+	origin += vector2(5.0 * cos(angle / 57.3), 5.0 * sin(angle / 57.3));
 
 }
 
