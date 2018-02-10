@@ -1,6 +1,5 @@
 #include "vector2.hpp"
 
-#include <cmath>
 
 vector2::vector2()
 {

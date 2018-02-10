@@ -1,4 +1,4 @@
-#include "mathUtilities.h"
+#include "mathUtilities.hpp"
 
 int mathUtilities::fltoint(float target)
 {

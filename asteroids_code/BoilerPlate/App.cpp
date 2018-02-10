@@ -90,16 +90,15 @@ namespace Engine
 		{
 
 		case SDL_SCANCODE_W:
-			onway.move(vector2(0, 2));
+			onway.moveforward();
 			break;
 		case SDL_SCANCODE_A:
-			onway.move(vector2(-2, 0));
+			onway.rotateleft();
 			break;
-		case SDL_SCANCODE_S:
-			onway.move(vector2(0, -2));
+		case SDL_SCANCODE_S:	
 			break;
 		case SDL_SCANCODE_D:
-			onway.move(vector2(2, 0));
+			onway.rotateright();
 			break;
 		default:			
 			SDL_Log("%S was pressed.", keyBoardEvent.keysym.scancode);
@@ -147,7 +146,7 @@ namespace Engine
 			// Spin lock
 			endTime = m_timer->GetElapsedTimeInSeconds();
 		}
-
+		onway.update();
 		//double elapsedTime = endTime - startTime;        
 
 		m_lastFrameTime = m_timer->GetElapsedTimeInSeconds();

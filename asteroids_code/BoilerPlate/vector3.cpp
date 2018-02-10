@@ -1,5 +1,4 @@
 #include "vector3.hpp"
-#include <cmath>
 
 vector3::vector3()
 {

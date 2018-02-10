@@ -24,14 +24,14 @@
     <ClCompile Include="player.cpp">
       <Filter>Engine\Source files</Filter>
     </ClCompile>
+    <ClCompile Include="vector4.cpp">
+      <Filter>Engine\Source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp" />
     <ClInclude Include="SDLEvent.hpp" />
     <ClInclude Include="TimeManager.hpp" />
-    <ClInclude Include="mathUtilities.h">
-      <Filter>ex_utilities\Header files</Filter>
-    </ClInclude>
     <ClInclude Include="color.h">
       <Filter>ex_utilities\Header files</Filter>
     </ClInclude>
@@ -46,6 +46,12 @@
     </ClInclude>
     <ClInclude Include="player.hpp">
       <Filter>Engine\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="vector4.hpp">
+      <Filter>Engine\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="mathUtilities.hpp">
+      <Filter>ex_utilities\Header files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
