@@ -1,12 +1,11 @@
 #pragma once
-#include "color.h"
+#include "Color.h"
 
-static class palet
+static struct Palet
 {
-public:
-	color bluescreen();
-	color redscreen();
-	color greenscreen();
-	color darkbluescreen();
+	Color BlueScreen();
+	Color RedScreen();
+	Color GreenScreen();
+	Color DarkBlueScreen();
 
 };

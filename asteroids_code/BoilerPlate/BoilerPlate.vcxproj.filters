@@ -6,51 +6,51 @@
     <ClCompile Include="SDLEvent.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="stb_image.c" />
-    <ClCompile Include="mathUtilities.cpp">
+    <ClCompile Include="Player.cpp">
+      <Filter>Engine\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector2.cpp">
+      <Filter>Engine\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector3.cpp">
+      <Filter>Engine\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector4.cpp">
+      <Filter>Engine\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Color.cpp">
       <Filter>ex_utilities\Source files</Filter>
     </ClCompile>
-    <ClCompile Include="color.cpp">
+    <ClCompile Include="MathUtilities.cpp">
       <Filter>ex_utilities\Source files</Filter>
     </ClCompile>
-    <ClCompile Include="palet.cpp">
+    <ClCompile Include="Palet.cpp">
       <Filter>ex_utilities\Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="vector2.cpp">
-      <Filter>Engine\Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="vector3.cpp">
-      <Filter>Engine\Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>Engine\Source files</Filter>
-    </ClCompile>
-    <ClCompile Include="vector4.cpp">
-      <Filter>Engine\Source files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp" />
     <ClInclude Include="SDLEvent.hpp" />
     <ClInclude Include="TimeManager.hpp" />
-    <ClInclude Include="color.h">
+    <ClInclude Include="Player.hpp">
+      <Filter>Engine\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.hpp">
+      <Filter>Engine\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.hpp">
+      <Filter>Engine\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector4.hpp">
+      <Filter>Engine\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
       <Filter>ex_utilities\Header files</Filter>
     </ClInclude>
-    <ClInclude Include="palet.h">
+    <ClInclude Include="MathUtilities.hpp">
       <Filter>ex_utilities\Header files</Filter>
     </ClInclude>
-    <ClInclude Include="vector2.hpp">
-      <Filter>Engine\Header files</Filter>
-    </ClInclude>
-    <ClInclude Include="vector3.hpp">
-      <Filter>Engine\Header files</Filter>
-    </ClInclude>
-    <ClInclude Include="player.hpp">
-      <Filter>Engine\Header files</Filter>
-    </ClInclude>
-    <ClInclude Include="vector4.hpp">
-      <Filter>Engine\Header files</Filter>
-    </ClInclude>
-    <ClInclude Include="mathUtilities.hpp">
+    <ClInclude Include="Palet.h">
       <Filter>ex_utilities\Header files</Filter>
     </ClInclude>
   </ItemGroup>

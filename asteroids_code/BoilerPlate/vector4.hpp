@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cmath>
-struct vector4 {
+struct Vector4 {
 
 	//members
 	float x;
@@ -11,30 +11,30 @@ struct vector4 {
 	float length;
 
 	//constructor
-	vector4();
-	vector4(float, float, float, float);
-	vector4(float);
+	Vector4();
+	Vector4(float, float, float, float);
+	Vector4(float);
 
 	//functions
 
 	float Length();
-	float squaredlength();
-	float normalize();
+	float SquaredLength();
+	float Normalize();
 
 	//Overload
 
-	vector4 operator+(const vector4&);
-	vector4 operator-(const vector4&);
-	vector4 operator*(const vector4&);
-	vector4 operator/(const vector4&);
-	bool operator==(const vector4&);
-	bool operator!=(const vector4&);
-	vector4& operator=(const vector4&);
-	vector4& operator+=(const vector4&);
-	vector4& operator-=(const vector4&);
-	vector4& operator*=(const vector4&);
-	vector4& operator/=(const vector4&);
-	friend vector4 operator*(float, const vector4&);
-	friend vector4 operator*(const vector4&, float);
+	Vector4 operator+(const Vector4&);
+	Vector4 operator-(const Vector4&);
+	Vector4 operator*(const Vector4&);
+	Vector4 operator/(const Vector4&);
+	bool operator==(const Vector4&);
+	bool operator!=(const Vector4&);
+	Vector4& operator=(const Vector4&);
+	Vector4& operator+=(const Vector4&);
+	Vector4& operator-=(const Vector4&);
+	Vector4& operator*=(const Vector4&);
+	Vector4& operator/=(const Vector4&);
+	friend Vector4 operator*(float, const Vector4&);
+	friend Vector4 operator*(const Vector4&, float);
 
 };

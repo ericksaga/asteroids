@@ -1,25 +1,25 @@
-#include "palet.h"
+#include "Palet.h"
 
-color palet::redscreen()
+Color Palet::RedScreen()
 {
-	color acc(1.0, 0.0, 0.0, 1.0);
+	Color acc(1.0, 0.0, 0.0, 1.0);
 	return acc;
 }
 
-color palet::bluescreen()
+Color Palet::BlueScreen()
 {
-	color acc(0.0, 0.0, 1.0, 1.0);
+	Color acc(0.0, 0.0, 1.0, 1.0);
 	return acc;
 }
 
-color palet::greenscreen()
+Color Palet::GreenScreen()
 {
-	color acc(0.0, 1.0, 0.0, 1.0);
+	Color acc(0.0, 1.0, 0.0, 1.0);
 	return acc;
 }
 
-color palet::darkbluescreen()
+Color Palet::DarkBlueScreen()
 {
-	color acc(0.0, 0.0, 0.54, 1.0);
+	Color acc(0.0, 0.0, 0.54, 1.0);
 	return acc;
 }

@@ -1,19 +1,24 @@
 #pragma once
 
-#include "vector2.hpp"
-class player {
+#include "Vector2.hpp"
+
+const float move_speed = 5.0;
+const float rotation_angle = 4.0;
+class Player {
 
 	//members
-	vector2 origin;
-	float angle;
+	Vector2 origin;
+	float angle_degree;
 	//functions
+	void Ship_Render();
+	void Thruster_Render();
+
 public:
 	
-	player();
-	void moveforward();
-	void rotateleft();
-	void rotateright();
-	void update();
-	void render();
-
+	Player();
+	void MoveForward();
+	void RotateLeft();
+	void RotateRight();
+	void Update(const int w_width, const int w_height);
+	void Render();
 };

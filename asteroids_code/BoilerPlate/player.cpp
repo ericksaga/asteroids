@@ -1,13 +1,20 @@
 // OpenGL includes
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
-#include "player.hpp"
-#include "color.h"
+#include "Player.hpp"
+#include "Color.h"
 
 
-void player::render()
+void Player::Render()
 {
 	//put a thrusting figure (like a fire) at the back of the spaceship
+	glLoadIdentity();
+	glTranslatef(origin.x, origin.y, 0.0);
+	Ship_Render();
+}
+
+void Player::Ship_Render()
+{
 	glBegin(GL_LINE_LOOP);
 	glVertex2f(0.0, 30.0);
 	glVertex2f(-10.0, 0.0);
@@ -27,53 +34,48 @@ void player::render()
 	glEnd();
 }
 
-void player::update()
+void Player::Update(const int w_width, const int w_height)
 {
-	glRotatef(-angle, 0.0, 0.0, 1.0);
-	if (origin.x >= 568)
+	//glRotatef(-angle_degree, 0.0, 0.0, 1.0);
+	if (origin.x >= w_width/2)
 	{
-		glTranslatef(0.0, -1136.0, 0.0);
-		origin.x += -1136.0;
+		origin.x += -w_width;
 	}
-	if (origin.x <= -568)
+	if (origin.x <= -w_width/2)
 	{
-		glTranslatef(0.0, 1136.0, 0.0);
-		origin.x += 1136.0;
+		origin.x += w_width;
 	}
-	if (origin.y >= 320)
+	if (origin.y >= w_height/2)
 	{
-		glTranslatef(640, 0.0, 0.0);
-		origin.y += -640;
+		origin.y += -w_height;
 	}
-	if (origin.y <= -320)
+	if (origin.y <= -w_height/2)
 	{
-		glTranslatef(-640.0, 0.0, 0.0);
-		origin.y += 640.0;
+		origin.y += w_height;
 	}
-	glRotatef(angle, 0.0, 0.0, 1.0);
+	//glRotatef(angle_degree, 0.0, 0.0, 1.0);
 }
 
-void player::moveforward()
+void Player::MoveForward()
 {
-	glTranslatef(0.0, 5.0, 0.0);
-	origin += vector2(5.0 * cos(angle / 57.3), 5.0 * sin(angle / 57.3));
-
+	//origin += vector2(move_speed * cos(angle_degree / 57.3), move_speed * sin(angle_degree / 57.3));
+	origin += Vector2(0.0, move_speed);
 }
 
-void player::rotateleft()
+void Player::RotateLeft()
 {
-	glRotatef(4.0, 0.0, 0.0, 1.0);
-	angle += 4;
+	/*glRotatef(rotation_angle, 0.0, 0.0, 1.0);
+	angle_degree += 4;*/
 }
 
-void player::rotateright()
+void Player::RotateRight()
 {
-	glRotatef(-4.0, 0.0, 0.0, 1.0);
-	angle -= 4;
+	/*glRotatef(-rotation_angle, 0.0, 0.0, 1.0);
+	angle_degree -= rotation_angle;*/
 }
 
-player::player()
+Player::Player()
 {
-	origin = vector2(0, 0);
-	angle = 90;
+	origin = Vector2(0.0, 0.0);
+	angle_degree = 90.0;
 }

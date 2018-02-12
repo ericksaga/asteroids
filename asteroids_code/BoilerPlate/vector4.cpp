@@ -1,6 +1,6 @@
-#include "vector4.hpp"
+#include "Vector4.hpp"
 
-vector4::vector4()
+Vector4::Vector4()
 {
 	x = 0;
 	y = 0;
@@ -9,35 +9,35 @@ vector4::vector4()
 	length = 0;
 }
 
-vector4::vector4(float value)
+Vector4::Vector4(float axis_val)
 {
-	x = value;
-	y = value;
-	z = value;
-	w = value;
+	x = axis_val;
+	y = axis_val;
+	z = axis_val;
+	w = axis_val;
 	length = Length();
 }
 
-vector4::vector4(float cord_x, float cord_y, float cord_z, float cord_w)
+Vector4::Vector4(float x_axis, float y_axis, float z_axis, float w_axis)
 {
-	x = cord_x;
-	y = cord_y;
-	z = cord_z;
-	w = cord_w;
+	x = x_axis;
+	y = y_axis;
+	z = z_axis;
+	w = w_axis;
 	length = Length();
 }
 
-float vector4::Length()
+float Vector4::Length()
 {
 	return sqrt(x * x + y * y + z * z + w * w);
 }
 
-float vector4::squaredlength()
+float Vector4::SquaredLength()
 {
 	return x * x + y * y + z * z + w * w;
 }
 
-float vector4::normalize()
+float Vector4::Normalize()
 {
 	length = Length();
 	float scale = 1.0f / length;
@@ -49,101 +49,101 @@ float vector4::normalize()
 	return length;
 }
 
-vector4 vector4::operator+(const vector4& val)
+Vector4 Vector4::operator+(const Vector4& rhs)
 {
-	return vector4(x + val.x, y + val.y, z + val.z, w + val.w);
+	return Vector4(x + rhs.x, y + rhs.y, z + rhs.z, w + rhs.w);
 }
 
-vector4 vector4::operator-(const vector4& val)
+Vector4 Vector4::operator-(const Vector4&rhs)
 {
-	return vector4(x - val.x, y - val.y, z - val.z, w - val.w);
+	return Vector4(x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w);
 }
 
-vector4 vector4::operator*(const vector4& val)
+Vector4 Vector4::operator*(const Vector4&rhs)
 {
-	return vector4(x * val.x, y * val.y, z * val.z, w * val.w);
+	return Vector4(x * rhs.x, y * rhs.y, z * rhs.z, w * rhs.w);
 }
 
-vector4 vector4::operator/(const vector4& val)
-{
-	if (val.x == 0 || val.y == 0 || val.z == 0 || val.w == 0)
+Vector4 Vector4::operator/(const Vector4& rhs)
+{ 
+	if (rhs.x == 0 || rhs.y == 0 || rhs.z == 0 || rhs.w == 0)
 	{
 		throw "Division by 0 is not defined";
 	}
 
-	return vector4(x / val.x, y / val.y, z / val.z, w / val.w);
+	return Vector4(x / rhs.x, y / rhs.y, z / rhs.z, w / rhs.w);
 }
 
-bool vector4::operator==(const vector4& val)
+bool Vector4::operator==(const Vector4& rhs)
 {
-	return (x == val.x) && (y == val.y) && (z == val.z) && (w == val.w);
+	return (x == rhs.x) && (y == rhs.y) && (z == rhs.z) && (w == rhs.w);
 }
 
-bool vector4::operator!=(const vector4& val)
+bool Vector4::operator!=(const Vector4& rhs)
 {
-	return (x != val.x) || (y != val.y) || (z != val.z) || (w != val.w);
+	return (x != rhs.x) || (y != rhs.y) || (z != rhs.z) || (w != rhs.w);
 }
 
-vector4& vector4::operator=(const vector4& val)
+Vector4& Vector4::operator=(const Vector4& rhs)
 {
-	if (x == val.x && y == val.y && z == val.z && w == val.w)
+	if (x == rhs.x && y == rhs.y && z == rhs.z && w == rhs.w)
 	{
 		return *this;
 	}
 
-	x = val.x;
-	y = val.y;
-	z = val.z;
-	w = val.w;
+	x = rhs.x;
+	y = rhs.y;
+	z = rhs.z;
+	w = rhs.w;
 	return *this;
 }
 
-vector4& vector4::operator+=(const vector4& val)
+Vector4& Vector4::operator+=(const Vector4& rhs)
 {
-	x = val.x + x;
-	y = val.y + y;
-	z = val.z + z;
-	w = val.w + w;
+	x = rhs.x + x;
+	y = rhs.y + y;
+	z = rhs.z + z;
+	w = rhs.w + w;
 	return *this;
 }
 
-vector4& vector4::operator-=(const vector4& val)
+Vector4& Vector4::operator-=(const Vector4& rhs)
 {
-	x = x - val.x;
-	y = y - val.y;
-	z = z - val.z;
-	w = w - val.w;
+	x = x - rhs.x;
+	y = y - rhs.y;
+	z = z - rhs.z;
+	w = w - rhs.w;
 	return *this;
 }
 
-vector4& vector4::operator*=(const vector4& val)
+Vector4& Vector4::operator*=(const Vector4& rhs)
 {
-	x = x * val.x;
-	y = y * val.y;
-	z = z * val.z;
-	w = w * val.w;
+	x = x * rhs.x;
+	y = y * rhs.y;
+	z = z * rhs.z;
+	w = w * rhs.w;
 	return *this;
 }
 
-vector4& vector4::operator/=(const vector4& val)
+Vector4& Vector4::operator/=(const Vector4& rhs)
 {
-	if (val.x == 0 || val.y == 0 || val.z == 0 || val.w == 0)
+	if (rhs.x == 0 || rhs.y == 0 || rhs.z == 0 || rhs.w == 0)
 	{
 		throw "Division by 0 is not defined";
 	}
-	x = x / val.x;
-	y = y / val.y;
-	z = z / val.z;
-	w = w / val.w;
+	x = x / rhs.x;
+	y = y / rhs.y;
+	z = z / rhs.z;
+	w = w / rhs.w;
 	return *this;
 }
 
-vector4 operator*(float mult, const vector4& vect)
+Vector4 operator*(float esc_fact, const Vector4& vect)
 {
-	return vector4(mult * vect.x, mult * vect.y, mult * vect.z, mult * vect.w);
+	return Vector4(esc_fact * vect.x, esc_fact * vect.y, esc_fact * vect.z, esc_fact * vect.w);
 }
 
-vector4 operator*(const vector4& vect, float mult)
+Vector4 operator*(const Vector4& vect, float esc_fact)
 {
-	return vector4(mult * vect.x, mult * vect.y, mult * vect.z, mult * vect.w);
+	return Vector4(esc_fact * vect.x, esc_fact * vect.y, esc_fact * vect.z, esc_fact * vect.w);
 }

@@ -2,10 +2,10 @@
 #include <iostream>
 #include <algorithm>
 
-#include "palet.h"
+#include "Palet.h"
 
-#include "player.hpp"
-#include "vector2.hpp"
+#include "Player.hpp"
+#include "Vector2.hpp"
 
 // OpenGL includes
 #include <GL/glew.h>
@@ -15,9 +15,9 @@ namespace Engine
 {
 	const float DESIRED_FRAME_RATE = 60.0f;
 	const float DESIRED_FRAME_TIME = 1.0f / DESIRED_FRAME_RATE;
-	palet change;
-	color stats(0.1f, 0.1f, 0.15f, 1.0f);
-	player onway;
+	Palet change;
+	Color stats(0.1f, 0.1f, 0.15f, 1.0f);
+	Player player;
 
 	App::App(const std::string& title, const int width, const int height)
 		: m_title(title)
@@ -90,15 +90,13 @@ namespace Engine
 		{
 
 		case SDL_SCANCODE_W:
-			onway.moveforward();
+			player.MoveForward();
 			break;
 		case SDL_SCANCODE_A:
-			onway.rotateleft();
-			break;
-		case SDL_SCANCODE_S:	
+			player.RotateLeft();
 			break;
 		case SDL_SCANCODE_D:
-			onway.rotateright();
+			player.RotateRight();
 			break;
 		default:			
 			SDL_Log("%S was pressed.", keyBoardEvent.keysym.scancode);
@@ -114,16 +112,16 @@ namespace Engine
 			OnExit();
 			break;
 		case SDL_SCANCODE_C:
-			stats = change.bluescreen();
+			stats = change.BlueScreen();
 			break;
 		case SDL_SCANCODE_V:
-			stats = change.greenscreen();
+			stats = change.GreenScreen();
 			break;
 		case SDL_SCANCODE_X:
-			stats = change.redscreen();
+			stats = change.RedScreen();
 			break;
 		case SDL_SCANCODE_Z:
-			stats = change.darkbluescreen();
+			stats = change.DarkBlueScreen();
 			break;
 		default:
 			//DO NOTHING
@@ -137,6 +135,7 @@ namespace Engine
 
 		// Update code goes here
 		//
+		player.Update(m_width, m_height);
 
 		double endTime = m_timer->GetElapsedTimeInSeconds();
 		double nextTimeFrame = startTime + DESIRED_FRAME_TIME;
@@ -146,7 +145,6 @@ namespace Engine
 			// Spin lock
 			endTime = m_timer->GetElapsedTimeInSeconds();
 		}
-		onway.update();
 		//double elapsedTime = endTime - startTime;        
 
 		m_lastFrameTime = m_timer->GetElapsedTimeInSeconds();
@@ -156,10 +154,10 @@ namespace Engine
 
 	void App::Render()
 	{
-		glClearColor(stats.getred(), stats.getgreen(), stats.getblue(), stats.getalpha());
+		glClearColor(stats.red, stats.green, stats.blue, stats.alpha);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		onway.render();
+		player.Render();
 		
 		SDL_GL_SwapWindow(m_mainWindow);
 	}

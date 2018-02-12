@@ -1,6 +1,6 @@
-#include "mathUtilities.hpp"
+#include "MathUtilities.hpp"
 
-int mathUtilities::fltoint(float target)
+int MathUtilities::FlToInt(float target)
 {
 	int acc = (int) target;
 	if (target - acc >= 0.5)
@@ -10,7 +10,7 @@ int mathUtilities::fltoint(float target)
 	return acc;
 }
 
-int mathUtilities::fltolowevenint(float target)
+int MathUtilities::FlToLowEvenInt(float target)
 {
 	int acc = (int) target;
 	if (acc % 2 != 0)
@@ -26,7 +26,7 @@ int mathUtilities::fltolowevenint(float target)
 	}
 	return acc;
 }
-int mathUtilities::fltohighevenint(float target)
+int MathUtilities::FlToHighEvenInt(float target)
 {
 	int acc = (int) target;
 	if (acc % 2 != 0)
@@ -37,7 +37,7 @@ int mathUtilities::fltohighevenint(float target)
 }
 
 template<class type>
-type mathUtilities::max(type a, type b)
+type MathUtilities::Max(type a, type b)
 {
 	type acc = b;
 	if (a > b)
@@ -48,23 +48,23 @@ type mathUtilities::max(type a, type b)
 }
 
 template<class type>
-type mathUtilities::max(type a, type b, type c)
+type MathUtilities::Max(type a, type b, type c)
 {
-	type acc = max(a, b);
-	acc = max(acc, c);
+	type acc = Max(a, b);
+	acc = Max(acc, c);
 	return acc;
 }
 
 template<class type>
-type mathUtilities::max(type a, type b, type c, type d)
+type MathUtilities::Max(type a, type b, type c, type d)
 {
-	type acc = max(a, b, c);
-	acc = max(acc, d);
+	type acc = Max(a, b, c);
+	acc = Max(acc, d);
 	return acc;
 }
 
 template<class type>
-type mathUtilities::min(type a, type b)
+type MathUtilities::Min(type a, type b)
 {
 	type acc = b;
 	if (a < b)
@@ -75,23 +75,23 @@ type mathUtilities::min(type a, type b)
 }
 
 template<class type>
-type mathUtilities::min(type a, type b, type c)
+type MathUtilities::Min(type a, type b, type c)
 {
-	type acc = min(a, b);
-	acc = min(acc, c);
+	type acc = Min(a, b);
+	acc = Min(acc, c);
 	return acc;
 }
 
 template<class type>
-type mathUtilities::min(type a, type b, type c, type d)
+type MathUtilities::Min(type a, type b, type c, type d)
 {
-	type acc = min(a, b, c);
-	acc = min(acc, d);
+	type acc = Min(a, b, c);
+	acc = Min(acc, d);
 	return acc;
 }
 
 template<class type>
-type mathUtilities::clamp(type r_min, type r_max, type target)
+type MathUtilities::Clamp(type r_min, type r_max, type target)
 {
 	if (target < min)
 	{
@@ -104,17 +104,17 @@ type mathUtilities::clamp(type r_min, type r_max, type target)
 	return target;
 }
 
-float mathUtilities::degtorad(float target)
+float MathUtilities::DegToRad(float target)
 {
 	return target * (180 / pi);
 }
 
-float mathUtilities::radtodeg(float target)
+float MathUtilities::RadToDeg(float target)
 {
 	return target * (pi / 180);
 }
 
-float mathUtilities::adistancedeg(float a, float b)
+float MathUtilities::ADistanceDeg(float a, float b)
 {
 	float result;
 	result = a - b;
@@ -125,7 +125,7 @@ float mathUtilities::adistancedeg(float a, float b)
 	return result;
 }
 
-float mathUtilities::adistancerad(float a, float b)
+float MathUtilities::ADistanceRad(float a, float b)
 {
 	float result;
 	result = a - b;
@@ -136,7 +136,7 @@ float mathUtilities::adistancerad(float a, float b)
 	return result;
 }
 
-bool mathUtilities::ispow2(int target)
+bool MathUtilities::IsPow2(int target)
 {
 	int acc = 1;
 	bool result = false;
@@ -151,7 +151,7 @@ bool mathUtilities::ispow2(int target)
 	return result;
 }
 
-float mathUtilities::interpolate(float start, float end, float target)
+float MathUtilities::Interpolate(float start, float end, float target)
 {
 	return target * (end - start) + start;
 }	

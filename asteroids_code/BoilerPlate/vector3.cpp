@@ -1,6 +1,6 @@
-#include "vector3.hpp"
+#include "Vector3.hpp"
 
-vector3::vector3()
+Vector3::Vector3()
 {
 	x = 0;
 	y = 0;
@@ -8,33 +8,33 @@ vector3::vector3()
 	length = 0;
 }
 
-vector3::vector3(float value)
+Vector3::Vector3(float axis_val)
 {
-	x = value;
-	y = value;
-	z = value;
+	x = axis_val;
+	y = axis_val;
+	z = axis_val;
 	length = Length();
 }
 
-vector3::vector3(float cord_x, float cord_y, float cord_z)
+Vector3::Vector3(float x_axis, float y_axis, float z_axis)
 {
-	x = cord_x;
-	y = cord_y;
-	z = cord_z;
+	x = x_axis;
+	y = y_axis;
+	z = z_axis;
 	length = Length();
 }
 
-float vector3::Length()
+float Vector3::Length()
 {
 	return sqrt(x * x + y * y + z * z);
 }
 
-float vector3::squaredlength()
+float Vector3::SquaredLength()
 {
 	return x * x + y * y + z * z;
 }
 
-float vector3::normalize()
+float Vector3::Normalize()
 {
 	length = Length();
 	float scale = 1.0f / length;
@@ -45,96 +45,96 @@ float vector3::normalize()
 	return length;
 }
 
-vector3 vector3::operator+(const vector3& val)
+Vector3 Vector3::operator+(const Vector3& rhs)
 {
-	return vector3(x + val.x, y + val.y, z + val.z);
+	return Vector3(x + rhs.x, y + rhs.y, z + rhs.z);
 }
 
-vector3 vector3::operator-(const vector3& val)
+Vector3 Vector3::operator-(const Vector3& rhs)
 {
-	return vector3(x - val.x, y - val.y, z - val.z);
+	return Vector3(x - rhs.x, y - rhs.y, z - rhs.z);
 }
 
-vector3 vector3::operator*(const vector3& val)
+Vector3 Vector3::operator*(const Vector3& rhs)
 {
-	return vector3(x * val.x, y * val.y, z * val.z);
+	return Vector3(x * rhs.x, y * rhs.y, z * rhs.z);
 }
 
-vector3 vector3::operator/(const vector3& val)
+Vector3 Vector3::operator/(const Vector3& rhs)
 {
-	if (val.x == 0 || val.y == 0 || val.z == 0)
+	if ( rhs.x == 0 || rhs.y == 0 || rhs.z == 0)
 	{
 		throw "Division by 0 is not defined";
 	}
 
-	return vector3(x / val.x, y / val.y, z / val.z);
+	return Vector3(x / rhs.x, y / rhs.y, z / rhs.z);
 }
 
-bool vector3::operator==(const vector3& val)
+bool Vector3::operator==(const Vector3& rhs)
 {
-	return (x == val.x) && (y == val.y) && (z == val.z);
+	return (x == rhs.x) && (y == rhs.y) && (z == rhs.z);
 }
 
-bool vector3::operator!=(const vector3& val)
+bool Vector3::operator!=(const Vector3& rhs)
 {
-	return (x != val.x) || (y != val.y) || (z != val.z);
+	return (x != rhs.x) || (y != rhs.y) || (z != rhs.z);
 }
 
-vector3& vector3::operator=(const vector3& val)
+Vector3& Vector3::operator=(const Vector3& rhs)
 {
-	if (x == val.x && y == val.y && z == val.z)
+	if (x == rhs.x && y == rhs.y && z == rhs.z)
 	{
 		return *this;
 	}
 
-	x = val.x;
-	y = val.y;
-	z = val.z;
+	x = rhs.x;
+	y = rhs.y;
+	z = rhs.z;
 	return *this;
 }
 
-vector3& vector3::operator+=(const vector3& val)
+Vector3& Vector3::operator+=(const Vector3& rhs)
 {
-	x = val.x + x;
-	y = val.y + y;
-	z = val.z + z;
+	x = rhs.x + x;
+	y = rhs.y + y;
+	z = rhs.z + z;
 	return *this;
 }
 
-vector3& vector3::operator-=(const vector3& val)
+Vector3& Vector3::operator-=(const Vector3& rhs)
 {
-	x = x - val.x;
-	y = y - val.y;
-	z = z - val.z;
+	x = x - rhs.x;
+	y = y - rhs.y;
+	z = z - rhs.z;
 	return *this;
 }
 
-vector3& vector3::operator*=(const vector3& val)
+Vector3& Vector3::operator*=(const Vector3& rhs)
 {
-	x = x * val.x;
-	y = y * val.y;
-	z = z * val.z;
+	x = x * rhs.x;
+	y = y * rhs.y;
+	z = z * rhs.z;
 	return *this;
 }
 
-vector3& vector3::operator/=(const vector3& val)
+Vector3& Vector3::operator/=(const Vector3& rhs)
 {
-	if (val.x == 0 || val.y == 0 || val.z == 0)
+	if ( rhs.x == 0 || rhs.y == 0 || rhs.z == 0)
 	{
 		throw "Division by 0 is not defined";
 	}
-	x = x / val.x;
-	y = y / val.y;
-	z = z / val.z;
+	x = x / rhs.x;
+	y = y / rhs.y;
+	z = z / rhs.z;
 	return *this;
 }
 
-vector3 operator*(float mult, const vector3& vect)
+Vector3 operator*(float esc_fact, const Vector3& vect)
 {
-	return vector3(mult * vect.x, mult * vect.y, mult * vect.z);
+	return Vector3(esc_fact * vect.x, esc_fact * vect.y, esc_fact * vect.z);
 }
 
-vector3 operator*(const vector3& vect, float mult)
+Vector3 operator*(const Vector3& vect, float esc_fact)
 {
-	return vector3(mult * vect.x, mult * vect.y, mult * vect.z);
+	return Vector3(esc_fact * vect.x, esc_fact * vect.y, esc_fact * vect.z);
 }

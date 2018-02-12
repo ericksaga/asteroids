@@ -1,40 +1,40 @@
-#include "vector2.hpp"
+#include "Vector2.hpp"
 
 
-vector2::vector2()
+Vector2::Vector2()
 {
 	x = 0.0f;
 	y = 0.0f;
 	length = 0.0f;
 }
 
-vector2::vector2(float cord_x, float cord_y)
+Vector2::Vector2(float x_axis, float y_axis)
 {
-	x = cord_x;
-	y = cord_y;
+	x = x_axis;
+	y = y_axis;
 	length = Length();
 }
 
-vector2::vector2(float value)
+Vector2::Vector2(float axis_val)
 {
-	x = value;
-	y = value;
+	x = axis_val;
+	y = axis_val;
 	length = Length();
 }
 
 //functions
 
-float vector2::Length()
+float Vector2::Length()
 {
 	return sqrt(x * x + y * y);
 }
 
-float vector2::squaredlength()
+float Vector2::SquaredLength()
 {
 	return x * x + y * y;
 }
 
-float vector2::normalize()
+float Vector2::Normalize()
 {
 	length = Length();
 	float scale = 1.0f / length;
@@ -45,92 +45,92 @@ float vector2::normalize()
 
 //Overload
 
-vector2 vector2::operator+(const vector2& val)
+Vector2 Vector2::operator+(const Vector2& rhs)
 {
-	return vector2(x + val.x, y + val.y);
+	return Vector2(x + rhs.x, y + rhs.y);
 }
 
-vector2 vector2::operator-(const vector2& val)
+Vector2 Vector2::operator-(const Vector2& rhs)
 {
-	return vector2(x - val.x, y - val.y);
+	return Vector2(x - rhs.x, y - rhs.y);
 }
 
-vector2 vector2::operator*(const vector2& val)
+Vector2 Vector2::operator*(const Vector2& rhs)
 {
-	return vector2(x * val.x, y * val.y);
+	return Vector2(x * rhs.x, y * rhs.y);
 }
 
-vector2 vector2::operator/(const vector2& val)
+Vector2 Vector2::operator/(const Vector2& rhs)
 {
-	if (val.x == 0 || val.y == 0)
+	if ( rhs.x == 0 || rhs.y == 0)
 	{
 		throw "Division by zero is not defined!";
 	}
 
 
-	return vector2(x / val.x, y / val.y);
+	return Vector2(x / rhs.x, y / rhs.y);
 	
 }
 
-bool vector2::operator==(const vector2& val)
+bool Vector2::operator==(const Vector2& rhs)
 {
-	return (val.x == x) && (val.y == y);
+	return (rhs.x == x) && (rhs.y == y);
 }
-bool vector2::operator!=(const vector2& val)
+bool Vector2::operator!=(const Vector2& rhs)
 {
-	return (val.x != x) || (val.y != y);
+	return (rhs.x != x) || (rhs.y != y);
 }
 
-vector2& vector2::operator=(const vector2& val)
+Vector2& Vector2::operator=(const Vector2& rhs)
 {
-	if (*this == val)
+	if (*this == rhs)
 	{
 		return *this;
 	}
-	x = val.x;
-	y = val.y;
+	x = rhs.x;
+	y = rhs.y;
 	return *this;
 }
 
-vector2& vector2::operator+=(const vector2& val)
+Vector2& Vector2::operator+=(const Vector2& rhs)
 {
-	x = val.x + x;
-	y = val.y + y;
+	x = rhs.x + x;
+	y = rhs.y + y;
 	return *this;
 }
 
-vector2& vector2::operator-=(const vector2& val)
+Vector2& Vector2::operator-=(const Vector2& rhs)
 {
-	x = x - val.x;
-	y = y - val.y;
+	x = x - rhs.x;
+	y = y - rhs.y;
 	return *this;
 }
 
-vector2& vector2::operator*=(const vector2& val)
+Vector2& Vector2::operator*=(const Vector2& rhs)
 {
-	x = x * val.x;
-	y = y * val.y;
+	x = x * rhs.x;
+	y = y * rhs.y;
 	return *this;
 }
 
-vector2& vector2::operator/=(const vector2& val)
+Vector2& Vector2::operator/=(const Vector2& rhs)
 {
-	if (val.x == 0 || val.y == 0)
+	if ( rhs.x == 0 || rhs.y == 0)
 	{
 		throw "Division by zero is not defined!";
 	}
-	x = x / val.x;
-	y = y / val.y;
+	x = x / rhs.x;
+	y = y / rhs.y;
 	 
 	return *this;
 }
 
-vector2 operator*(float mult, const vector2& vect) 
+Vector2 operator*(float esc_fact, const Vector2& vect) 
 {
-	return vector2(mult * vect.x, mult * vect.y);
+	return Vector2(esc_fact * vect.x, esc_fact * vect.y);
 }
 
-vector2 operator*(const vector2& vect, float mult)
+Vector2 operator*(const Vector2& vect, float esc_fact)
 {
-	return vector2(mult * vect.x, mult * vect.y);
+	return Vector2(esc_fact * vect.x, esc_fact * vect.y);
 }
