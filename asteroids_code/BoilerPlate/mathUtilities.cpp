@@ -106,12 +106,12 @@ type MathUtilities::Clamp(type r_min, type r_max, type target)
 
 float MathUtilities::DegToRad(float target)
 {
-	return target * (180 / pi);
+	return target * (pi / 180.0f);
 }
 
 float MathUtilities::RadToDeg(float target)
 {
-	return target * (pi / 180);
+	return target * (180.0f / pi);
 }
 
 float MathUtilities::ADistanceDeg(float a, float b)

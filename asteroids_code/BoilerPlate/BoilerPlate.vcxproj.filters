@@ -27,6 +27,9 @@
     <ClCompile Include="Palet.cpp">
       <Filter>ex_utilities\Source files</Filter>
     </ClCompile>
+    <ClCompile Include="Asteroids.cpp">
+      <Filter>Engine\Source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp" />
@@ -52,6 +55,9 @@
     </ClInclude>
     <ClInclude Include="Palet.h">
       <Filter>ex_utilities\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Asteroids.hpp">
+      <Filter>Engine\Header files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

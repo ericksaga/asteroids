@@ -1,14 +1,22 @@
 #pragma once
 
-#include "Vector2.hpp"
+#include <vector>
 
-const float move_speed = 5.0;
-const float rotation_angle = 4.0;
+#include "Vector2.hpp"
+#include "mathUtilities.hpp"
+
+const float move_speed = 5.0f;
+const float rotation_angle = 3.0f;
 class Player {
 
 	//members
+	MathUtilities conv;
 	Vector2 origin;
+	std::vector <Vector2> ship_points;
+	std::vector <Vector2> thruster_points;
 	float angle_degree;
+	float mass;
+	bool thruster_on;
 	//functions
 	void Ship_Render();
 	void Thruster_Render();

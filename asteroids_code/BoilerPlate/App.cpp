@@ -5,7 +5,7 @@
 #include "Palet.h"
 
 #include "Player.hpp"
-#include "Vector2.hpp"
+#include "Asteroids.hpp"
 
 // OpenGL includes
 #include <GL/glew.h>
@@ -18,6 +18,7 @@ namespace Engine
 	Palet change;
 	Color stats(0.1f, 0.1f, 0.15f, 1.0f);
 	Player player;
+	Asteroids enemy(Vector2(130.0f, 120.0f), 30.0f);
 
 	App::App(const std::string& title, const int width, const int height)
 		: m_title(title)
@@ -98,6 +99,9 @@ namespace Engine
 		case SDL_SCANCODE_D:
 			player.RotateRight();
 			break;
+		case SDL_SCANCODE_S:
+			enemy.ChangeSize();
+			break;
 		default:			
 			SDL_Log("%S was pressed.", keyBoardEvent.keysym.scancode);
 			break;
@@ -136,7 +140,7 @@ namespace Engine
 		// Update code goes here
 		//
 		player.Update(m_width, m_height);
-
+		enemy.Update(m_width, m_height);
 		double endTime = m_timer->GetElapsedTimeInSeconds();
 		double nextTimeFrame = startTime + DESIRED_FRAME_TIME;
 
@@ -158,6 +162,7 @@ namespace Engine
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		player.Render();
+		enemy.Render();
 		
 		SDL_GL_SwapWindow(m_mainWindow);
 	}

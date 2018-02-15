@@ -172,6 +172,7 @@ copy /Y "$(SolutionDir)\Externals\SDL2-2.0.4\lib\x64\SDL2.dll" "$(TargetDir)SDL2
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Asteroids.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MathUtilities.cpp" />
@@ -186,6 +187,7 @@ copy /Y "$(SolutionDir)\Externals\SDL2-2.0.4\lib\x64\SDL2.dll" "$(TargetDir)SDL2
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp" />
+    <ClInclude Include="Asteroids.hpp" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="MathUtilities.hpp" />
     <ClInclude Include="Palet.h" />
