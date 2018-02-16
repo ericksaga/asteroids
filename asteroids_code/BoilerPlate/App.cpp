@@ -99,9 +99,6 @@ namespace Engine
 		case SDL_SCANCODE_D:
 			player.RotateRight();
 			break;
-		case SDL_SCANCODE_S:
-			enemy.ChangeSize();
-			break;
 		default:			
 			SDL_Log("%S was pressed.", keyBoardEvent.keysym.scancode);
 			break;
@@ -126,6 +123,9 @@ namespace Engine
 			break;
 		case SDL_SCANCODE_Z:
 			stats = change.DarkBlueScreen();
+			break;
+		case SDL_SCANCODE_S:
+			enemy.ChangeSize();
 			break;
 		default:
 			//DO NOTHING
@@ -163,7 +163,6 @@ namespace Engine
 
 		player.Render();
 		enemy.Render();
-		
 		SDL_GL_SwapWindow(m_mainWindow);
 	}
 

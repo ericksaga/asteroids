@@ -27,6 +27,7 @@ Asteroids::Asteroids(Vector2& st_position, float st_angle)
 	origin = st_position;
 	angle_degree = st_angle;
 	auto_rotate = 0.0f;
+	asteroid_state = BIG;
 	asteroids_points.push_back(Vector2(0.0f, 35.0f));
 	asteroids_points.push_back(Vector2(0.0f, 10.0f));
 	asteroids_points.push_back(Vector2(-15.0f, 0.0f));
