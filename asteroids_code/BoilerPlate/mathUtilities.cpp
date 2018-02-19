@@ -1,6 +1,6 @@
 #include "MathUtilities.hpp"
 
-int MathUtilities::FlToInt(float target)
+int MathUtilities::FloatToInt(float target)
 {
 	int acc = (int) target;
 	if (target - acc >= 0.5)
@@ -10,7 +10,7 @@ int MathUtilities::FlToInt(float target)
 	return acc;
 }
 
-int MathUtilities::FlToLowEvenInt(float target)
+int MathUtilities::FloatToLowEvenInt(float target)
 {
 	int acc = (int) target;
 	if (acc % 2 != 0)
@@ -26,7 +26,7 @@ int MathUtilities::FlToLowEvenInt(float target)
 	}
 	return acc;
 }
-int MathUtilities::FlToHighEvenInt(float target)
+int MathUtilities::FloatToHighEvenInt(float target)
 {
 	int acc = (int) target;
 	if (acc % 2 != 0)
@@ -104,17 +104,17 @@ type MathUtilities::Clamp(type r_min, type r_max, type target)
 	return target;
 }
 
-float MathUtilities::DegToRad(float target)
+float MathUtilities::DegreeToRadian(float target)
 {
-	return target * (pi / 180.0f);
+	return target * (PI / 180.0f);
 }
 
-float MathUtilities::RadToDeg(float target)
+float MathUtilities::RadianToDegree(float target)
 {
-	return target * (180.0f / pi);
+	return target * (180.0f / PI);
 }
 
-float MathUtilities::ADistanceDeg(float a, float b)
+float MathUtilities::AngularDistanceDegree(float a, float b)
 {
 	float result;
 	result = a - b;
@@ -125,13 +125,13 @@ float MathUtilities::ADistanceDeg(float a, float b)
 	return result;
 }
 
-float MathUtilities::ADistanceRad(float a, float b)
+float MathUtilities::AngularDistanceRadian(float a, float b)
 {
 	float result;
 	result = a - b;
 	if (result < 0)
 	{
-		result = 2 * pi + result;
+		result = 2 * PI + result;
 	}
 	return result;
 }
@@ -155,3 +155,29 @@ float MathUtilities::Interpolate(float start, float end, float target)
 {
 	return target * (end - start) + start;
 }	
+
+float MathUtilities::AngleNormalizeDegree(float target)
+{
+	if (target > 360)
+	{
+		return target - 360;
+	}
+	if (target < -360)
+	{
+		return target + 360;
+	}
+	return target;
+}
+float MathUtilities::AngleNormalizeRadian(float target)
+{
+	float Max_angle = 2 * PI;
+	if (target > Max_angle)
+	{
+		return target - Max_angle;
+	}
+	if (target < -Max_angle)
+	{
+		return target + Max_angle;
+	}
+	return target;
+}

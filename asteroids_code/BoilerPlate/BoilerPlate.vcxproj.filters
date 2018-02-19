@@ -27,7 +27,10 @@
     <ClCompile Include="Palet.cpp">
       <Filter>ex_utilities\Source files</Filter>
     </ClCompile>
-    <ClCompile Include="Asteroids.cpp">
+    <ClCompile Include="Asteroid.cpp">
+      <Filter>Engine\Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
       <Filter>Engine\Source files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,7 +59,10 @@
     <ClInclude Include="Palet.h">
       <Filter>ex_utilities\Header files</Filter>
     </ClInclude>
-    <ClInclude Include="Asteroids.hpp">
+    <ClInclude Include="Asteroid.hpp">
+      <Filter>Engine\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.hpp">
       <Filter>Engine\Header files</Filter>
     </ClInclude>
   </ItemGroup>

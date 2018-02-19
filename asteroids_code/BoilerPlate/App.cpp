@@ -5,7 +5,7 @@
 #include "Palet.h"
 
 #include "Player.hpp"
-#include "Asteroids.hpp"
+#include "Asteroid.hpp"
 
 // OpenGL includes
 #include <GL/glew.h>
@@ -18,7 +18,7 @@ namespace Engine
 	Palet change;
 	Color stats(0.1f, 0.1f, 0.15f, 1.0f);
 	Player player;
-	Asteroids enemy(Vector2(130.0f, 120.0f), 30.0f);
+	Asteroid enemy(Vector2(130.0f, 120.0f), 30.0f);
 
 	App::App(const std::string& title, const int width, const int height)
 		: m_title(title)
@@ -125,7 +125,7 @@ namespace Engine
 			stats = change.DarkBlueScreen();
 			break;
 		case SDL_SCANCODE_S:
-			enemy.ChangeSize();
+			enemy.ChangeSizeForTest();
 			break;
 		default:
 			//DO NOTHING
@@ -160,7 +160,6 @@ namespace Engine
 	{
 		glClearColor(stats.red, stats.green, stats.blue, stats.alpha);
 		glClear(GL_COLOR_BUFFER_BIT);
-
 		player.Render();
 		enemy.Render();
 		SDL_GL_SwapWindow(m_mainWindow);

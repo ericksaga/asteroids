@@ -7,5 +7,4 @@ static struct Palet
 	Color RedScreen();
 	Color GreenScreen();
 	Color DarkBlueScreen();
-
 };
