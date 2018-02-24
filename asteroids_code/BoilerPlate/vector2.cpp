@@ -37,10 +37,30 @@ float Vector2::SquaredLength()
 float Vector2::Normalize()
 {
 	length = Length();
-	float scale = 1.0f / length;
-	x *= scale;
-	y *= scale;
+	float LC_scale = 1.0f / length;
+	x *= LC_scale;
+	y *= LC_scale;
 	return length;
+}
+
+float Vector2::GetAngle()
+{
+	MathUtilities LC_math_master;
+	float LC_angle_degree = 90.0f;
+	if (x != 0)
+	{
+		LC_angle_degree = LC_math_master.RadianToDegree(atan(y / x));
+	}
+	LC_math_master.AngleNormalizeDegree(LC_angle_degree);
+	if (x < 0.0f && y >= 0.0f)
+	{
+		LC_angle_degree -= 180.0f;
+	}
+	else if (x < 0.0f && y < 0.0f)
+	{
+		LC_angle_degree += 180.0f;
+	}
+	return LC_angle_degree;
 }
 
 //Overload

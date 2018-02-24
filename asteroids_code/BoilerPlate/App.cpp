@@ -4,8 +4,7 @@
 
 #include "Palet.h"
 
-#include "Player.hpp"
-#include "Asteroid.hpp"
+
 
 // OpenGL includes
 #include <GL/glew.h>
@@ -17,8 +16,6 @@ namespace Engine
 	const float DESIRED_FRAME_TIME = 1.0f / DESIRED_FRAME_RATE;
 	Palet change;
 	Color stats(0.1f, 0.1f, 0.15f, 1.0f);
-	Player player;
-	Asteroid enemy(Vector2(130.0f, 120.0f), 30.0f);
 
 	App::App(const std::string& title, const int width, const int height)
 		: m_title(title)
@@ -28,13 +25,23 @@ namespace Engine
 		, m_timer(new TimeManager)
 		, m_mainWindow(nullptr)
 	{
+		srand(time(0));
 		m_state = GameState::UNINITIALIZED;
 		m_lastFrameTime = m_timer->GetElapsedTimeInSeconds();
+		player = new Player();
+		asteroid.push_back(new Asteroid());
+		GenerateAsteroid(asteroid[0]);
 	}
 
 	App::~App()
 	{
 		CleanupSDL();
+		delete player;
+		for (int x = 0; x < asteroid.size(); x++)
+		{
+			delete asteroid[x];
+		}
+		asteroid.clear();
 	}
 
 	void App::Execute()
@@ -91,13 +98,13 @@ namespace Engine
 		{
 
 		case SDL_SCANCODE_W:
-			player.MoveForward();
+			player->MoveForward();
 			break;
 		case SDL_SCANCODE_A:
-			player.RotateLeft();
+			player->RotateLeft();
 			break;
 		case SDL_SCANCODE_D:
-			player.RotateRight();
+			player->RotateRight();
 			break;
 		default:			
 			SDL_Log("%S was pressed.", keyBoardEvent.keysym.scancode);
@@ -125,7 +132,20 @@ namespace Engine
 			stats = change.DarkBlueScreen();
 			break;
 		case SDL_SCANCODE_S:
-			enemy.ChangeSizeForTest();
+			for (int x = 0; x < asteroid.size(); x++)
+			{
+				asteroid[x]->ChangeSizeForTest();
+			}
+			break;
+		case SDL_SCANCODE_P:
+			asteroid.push_back(new Asteroid());
+			GenerateAsteroid(asteroid[asteroid.size() - 1]);
+			break;
+		case SDL_SCANCODE_L:
+			if (asteroid.size() >= 1)
+			{
+				asteroid.pop_back();
+			}
 			break;
 		default:
 			//DO NOTHING
@@ -139,8 +159,11 @@ namespace Engine
 
 		// Update code goes here
 		//
-		player.Update(m_width, m_height);
-		enemy.Update(m_width, m_height);
+		player->Update(m_width, m_height);
+		for (int x = 0; x < asteroid.size();x++)
+		{
+			asteroid[x]->Update(m_width, m_height);
+		}
 		double endTime = m_timer->GetElapsedTimeInSeconds();
 		double nextTimeFrame = startTime + DESIRED_FRAME_TIME;
 
@@ -160,8 +183,11 @@ namespace Engine
 	{
 		glClearColor(stats.red, stats.green, stats.blue, stats.alpha);
 		glClear(GL_COLOR_BUFFER_BIT);
-		player.Render();
-		enemy.Render();
+		player->Render();
+		for (int x = 0; x < asteroid.size(); x++)
+		{
+			asteroid[x]->Render();
+		}
 		SDL_GL_SwapWindow(m_mainWindow);
 	}
 
@@ -273,5 +299,10 @@ namespace Engine
 		// Cleanup SDL pointers
 		//
 		CleanupSDL();
+	}
+	void App::GenerateAsteroid(Asteroid* target)
+	{
+		target->AssignOrientation(rand());
+		target->AssignPosition(rand(), rand());
 	}
 }

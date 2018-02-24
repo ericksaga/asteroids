@@ -2,7 +2,7 @@
 
 #include "Entity.hpp"
 
-const float MOVE_SPEED = 5.0f;
+const float MOVE_SPEED = 2.0f;
 const float ROTATION_ANGLE = 3.0f;
 class Player :public Entity
 {
@@ -19,6 +19,7 @@ public:
 private:
 	void Ship_Render();
 	void Thruster_Render();
+	void ApplyFriction();
 	//members
 	std::vector <Vector2> thruster_points;
 	float mass;

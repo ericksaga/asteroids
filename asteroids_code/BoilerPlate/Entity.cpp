@@ -28,12 +28,13 @@ void Entity::Warp(const int w_width, const int w_height)
 
 void Entity::MoveForward()
 {
-	float angle_radian = math_master.DegreeToRadian(angle_degree);
-	origin += Vector2(-SPEED * sin(angle_radian), SPEED * cos(angle_radian));
+	float LC_angle_radian = math_master.DegreeToRadian(angle_degree);
+	origin += Vector2(-SPEED * sin(LC_angle_radian), SPEED * cos(LC_angle_radian));
 }
 
 void Entity::Update(const int w_width, const int w_height)
 {
+	math_master.AngleNormalizeDegree(angle_degree);
 	Warp(w_width, w_height);
 }
 

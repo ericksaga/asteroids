@@ -1,9 +1,9 @@
 #pragma once
 #include "Vector2.hpp"
-#include "MathUtilities.hpp"
 #include <vector>
 
 const float SPEED = 3.0f;
+const float GRAVITY = 9.8f;
 class Entity
 {
 public:
@@ -17,6 +17,7 @@ protected:
 	//members
 	MathUtilities math_master;
 	Vector2 origin;
+	Vector2 speed;
 	float angle_degree;
 	std::vector<Vector2> figure_points;
 };

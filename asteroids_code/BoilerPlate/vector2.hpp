@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include "mathUtilities.hpp"
 struct Vector2 {
 	
 	//members
@@ -17,9 +18,8 @@ struct Vector2 {
 	float Length();
 	float SquaredLength();
 	float Normalize();
-	
+	float GetAngle();
 	//Overload
-
 	Vector2 operator+(const Vector2&);
 	Vector2 operator-(const Vector2&);
 	Vector2 operator*(const Vector2&);

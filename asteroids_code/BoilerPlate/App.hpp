@@ -5,10 +5,13 @@
 // C++ STL
 #include <string>
 #include <list>
-
+#include <stdlib.h>
+#include <time.h>
 // Asteroids
 #include "SDLEvent.hpp"
 #include "TimeManager.hpp"
+#include "Player.hpp"
+#include "Asteroid.hpp"
 
 namespace Engine
 {
@@ -52,7 +55,7 @@ namespace Engine
 		void OnExit							( ) override;
 		void OnKeyDown						( SDL_KeyboardEvent keyBoardEvent ) override;
 		void OnKeyUp						( SDL_KeyboardEvent keyBoardEvent ) override;
-
+		void GenerateAsteroid				(Asteroid*);
 
 		/* =============================================================
 		 * MEMBERS
@@ -66,7 +69,8 @@ namespace Engine
 		SDL_GLContext						m_context;
 		GameState::State					m_state;
 		Engine::TimeManager*				m_timer;
-
+		Player*								player;
+		std::vector<Asteroid*>				asteroid;
 	};
 }
 #endif /* GAME_HPP */
