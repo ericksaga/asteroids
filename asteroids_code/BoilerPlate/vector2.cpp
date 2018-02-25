@@ -63,6 +63,13 @@ float Vector2::GetAngle()
 	return LC_angle_degree;
 }
 
+float Vector2::VectorialDistance(Vector2 point)
+{
+	float LC_x_val = x - point.x;
+	float LC_y_val = y - point.y;
+	return sqrt(LC_x_val*LC_x_val + LC_y_val*LC_y_val);
+}
+
 //Overload
 
 Vector2 Vector2::operator+(const Vector2& rhs)

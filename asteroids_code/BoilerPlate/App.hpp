@@ -56,7 +56,9 @@ namespace Engine
 		void OnKeyDown						( SDL_KeyboardEvent keyBoardEvent ) override;
 		void OnKeyUp						( SDL_KeyboardEvent keyBoardEvent ) override;
 		void GenerateAsteroid				(Asteroid*);
-
+		void GenerateAsteroidWithPosition	(Asteroid*, Vector2);
+		void CheckCollision					();
+		void DebugCollision();
 		/* =============================================================
 		 * MEMBERS
 		 * ============================================================= */
@@ -64,6 +66,7 @@ namespace Engine
 		int									m_height;
 		int									m_nUpdates;
 		double								m_lastFrameTime;
+		bool								debug;
 		std::string							m_title;
 		SDL_Window*							m_mainWindow;
 		SDL_GLContext						m_context;
