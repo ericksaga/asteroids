@@ -587,6 +587,7 @@ namespace Engine
 	{
 		//Load game initial state
 		debug = false;
+		frame = false;
 		m_player = new Player();
 		GenerateAsteroid();
 		for (int x = 0; x < FRAME_LIMIT; x++)
