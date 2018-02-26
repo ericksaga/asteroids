@@ -30,12 +30,12 @@ Asteroid::Asteroid(int size)
 {
 	m_origin = Vector2(100.0f, 150.0f);
 	//size for small and medium asteroid, big asteroid on default constructor
-	if (size == 1)
+	if (size == 2)
 	{
 		m_asteroid_state = SMALL;
 		m_size_factor = (float)m_asteroid_state / 4.0f;
 	}
-	else if (size == 2)
+	else if (size == 3)
 	{
 		m_asteroid_state = MEDIUM;
 		m_size_factor = (float)m_asteroid_state / 4.0f;
