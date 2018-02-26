@@ -4,6 +4,7 @@
 
 const float SPEED = 3.0f;
 const float GRAVITY = 9.8f;
+const int LINE_AMOUNT = 15;
 class Entity
 {
 public:
@@ -23,11 +24,11 @@ protected:
 	//protected functions
 	void Warp(const int, const int);
 	//members
-	MathUtilities math_master;
-	Vector2 speed;
-	Vector2 origin;
-	float angle_degree;
-	std::vector<Vector2> figure_points;
-	float radius;
-	bool debugging;
+	MathUtilities m_math_master;
+	Vector2 m_speed;
+	Vector2 m_origin;
+	float m_angle_degree;
+	std::vector<Vector2> m_figure_points;
+	float m_radius;
+	bool m_debugging;
 };

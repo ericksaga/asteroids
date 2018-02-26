@@ -23,7 +23,7 @@ private:
 	void Ship_Render();
 	void Thruster_Render();
 	//members
-	std::vector <Vector2> thruster_points;
-	float mass;
-	bool thruster_on;
+	std::vector <Vector2> m_thruster_points;
+	float m_mass;
+	bool m_thruster_on;
 };

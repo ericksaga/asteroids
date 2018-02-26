@@ -5,75 +5,75 @@
 
 Asteroid::Asteroid()
 {
-	origin = Vector2(100.0f, 150.0f);
-	asteroid_state = BIG;
-	angle_degree = 25.0f;
-	auto_rotate = 0.0f;
-	size_factor = 1.0f;
-	radius = 30.0f;
-	colide = false;
-	close_to_ship = false;
-	close_to_bullet = false;
-	figure_points.push_back(Vector2(0.0f, 30.0f));
-	figure_points.push_back(Vector2(0.0f, 10.0f));
-	figure_points.push_back(Vector2(-15.0f, 0.0f));
-	figure_points.push_back(Vector2(-25.0f, 0.0f));
-	figure_points.push_back(Vector2(-15.0f, -15.0f));
-	figure_points.push_back(Vector2(0.0f, -25.0f));
-	figure_points.push_back(Vector2(15.0f, -15.0f));
-	figure_points.push_back(Vector2(25.0f, -5.0f));
-	figure_points.push_back(Vector2(25.0f, 20.0f));
-	figure_points.push_back(Vector2(10.0f, 27.0f));
-	asteroid_points_state = figure_points;
+	m_origin = Vector2(100.0f, 150.0f);
+	m_asteroid_state = BIG;
+	m_angle_degree = 25.0f;
+	m_auto_rotate = 0.0f;
+	m_size_factor = 1.0f;
+	m_radius = RADIUS;
+	m_colide = false;
+	m_close_to_ship = false;
+	m_close_to_bullet = false;
+	m_figure_points.push_back(Vector2(0.0f, 30.0f));
+	m_figure_points.push_back(Vector2(0.0f, 10.0f));
+	m_figure_points.push_back(Vector2(-15.0f, 0.0f));
+	m_figure_points.push_back(Vector2(-25.0f, 0.0f));
+	m_figure_points.push_back(Vector2(-15.0f, -15.0f));
+	m_figure_points.push_back(Vector2(0.0f, -25.0f));
+	m_figure_points.push_back(Vector2(15.0f, -15.0f));
+	m_figure_points.push_back(Vector2(25.0f, -5.0f));
+	m_figure_points.push_back(Vector2(25.0f, 20.0f));
+	m_figure_points.push_back(Vector2(10.0f, 27.0f));
+	m_asteroid_points_state = m_figure_points;
 }
 Asteroid::Asteroid(int size)
 {
-	origin = Vector2(100.0f, 150.0f);
+	m_origin = Vector2(100.0f, 150.0f);
 	//size for small and medium asteroid, big asteroid on default constructor
 	if (size == 1)
 	{
-		asteroid_state = SMALL;
-		size_factor = 0.5f;
+		m_asteroid_state = SMALL;
+		m_size_factor = (float)m_asteroid_state / 4.0f;
 	}
 	else if (size == 2)
 	{
-		asteroid_state = MEDIUM;
-		size_factor = 0.75f;
+		m_asteroid_state = MEDIUM;
+		m_size_factor = (float)m_asteroid_state / 4.0f;
 	}
-	angle_degree = 25.0f;
-	auto_rotate = 0.0f;
-	radius = 30.0f;
-	colide = false;
-	close_to_ship = false;
-	close_to_bullet = false;
-	figure_points.push_back(Vector2(0.0f, 30.0f));
-	figure_points.push_back(Vector2(0.0f, 10.0f));
-	figure_points.push_back(Vector2(-15.0f, 0.0f));
-	figure_points.push_back(Vector2(-25.0f, 0.0f));
-	figure_points.push_back(Vector2(-15.0f, -15.0f));
-	figure_points.push_back(Vector2(0.0f, -25.0f));
-	figure_points.push_back(Vector2(15.0f, -15.0f));
-	figure_points.push_back(Vector2(25.0f, -5.0f));
-	figure_points.push_back(Vector2(25.0f, 20.0f));
-	figure_points.push_back(Vector2(10.0f, 27.0f));
-	asteroid_points_state = figure_points;
+	m_angle_degree = 25.0f;
+	m_auto_rotate = 0.0f;
+	m_radius = RADIUS;
+	m_colide = false;
+	m_close_to_ship = false;
+	m_close_to_bullet = false;
+	m_figure_points.push_back(Vector2(0.0f, 30.0f));
+	m_figure_points.push_back(Vector2(0.0f, 10.0f));
+	m_figure_points.push_back(Vector2(-15.0f, 0.0f));
+	m_figure_points.push_back(Vector2(-25.0f, 0.0f));
+	m_figure_points.push_back(Vector2(-15.0f, -15.0f));
+	m_figure_points.push_back(Vector2(0.0f, -25.0f));
+	m_figure_points.push_back(Vector2(15.0f, -15.0f));
+	m_figure_points.push_back(Vector2(25.0f, -5.0f));
+	m_figure_points.push_back(Vector2(25.0f, 20.0f));
+	m_figure_points.push_back(Vector2(10.0f, 27.0f));
+	m_asteroid_points_state = m_figure_points;
 }
 
 void Asteroid::Render()
 {
 	glLoadIdentity();
-	float LC_real_angle = angle_degree + auto_rotate;
-	glTranslatef(origin.x, origin.y, 0.0f);
+	float LC_real_angle = m_angle_degree + m_auto_rotate;
+	glTranslatef(m_origin.x, m_origin.y, 0.0f);
 	glRotatef(LC_real_angle, 0.0f, 0.0f, 1.0f);
 	glColor3f(0.9f, 0.9f, 0.9f);
 	//red asteroid if coliding, only on the debugging mode
-	if (colide)
+	if (m_colide)
 	{
 		glColor3f(1.0f, 0.0f, 0.0f);
 	}
 	RenderAsteroid();
 	//render the circle in debugging moode
-	if (debugging)
+	if (m_debugging)
 	{
 		RenderCircle();
 	}
@@ -82,9 +82,9 @@ void Asteroid::Render()
 void Asteroid::RenderAsteroid()
 {
 	glBegin(GL_LINE_LOOP);
-	for (int x = 0; x < figure_points.size(); x++)
+	for (int x = 0; x < m_figure_points.size(); x++)
 	{
-		glVertex2f(figure_points[x].x, figure_points[x].y);
+		glVertex2f(m_figure_points[x].x, m_figure_points[x].y);
 	}
 	glEnd();
 }
@@ -92,43 +92,43 @@ void Asteroid::RenderAsteroid()
 void Asteroid::MoveForward(const float delta_time)
 {
 	//calculate speed depending on the size, smallest = fastest
-	float LC_angle_radian = math_master.DegreeToRadian(angle_degree);
-	float LC_speed_factor = 1/size_factor;
+	float LC_angle_radian = m_math_master.DegreeToRadian(m_angle_degree);
+	float LC_speed_factor = 1/m_size_factor;
 	float LC_speed_x = LC_speed_factor * ASTEROID_SPEED * -sin(LC_angle_radian);
 	float LC_speed_y = LC_speed_factor * ASTEROID_SPEED * cos(LC_angle_radian);
-	origin += delta_time * Vector2(LC_speed_x, LC_speed_y);
+	m_origin += delta_time * Vector2(LC_speed_x, LC_speed_y);
 }
 
 void Asteroid::Update(const int w_width, const int w_height, const float delta_time)
 {
 	MoveForward(delta_time);
-	auto_rotate += ASTEROID_ROTATION;
+	m_auto_rotate += ASTEROID_ROTATION;
 	Entity::Update(w_width, w_height, delta_time);
-	SizeRefactor();
+	MeasureSizeFactor();
 }
 
-void Asteroid::SizeRefactor()
+void Asteroid::MeasureSizeFactor()
 {
 	//change all the points and the radius depending the size of the asteroid
-	if (asteroid_state == BIG)
+	if (m_asteroid_state == BIG)
 	{
-		radius = 30.0f;
-		figure_points = asteroid_points_state;
+		m_radius = RADIUS;
+		m_figure_points = m_asteroid_points_state;
 	}
-	if (asteroid_state == MEDIUM)
+	if (m_asteroid_state == MEDIUM)
 	{
-		radius = 30.0f * size_factor;
-		for (int x = 0; x < figure_points.size(); x++)
+		m_radius = RADIUS * m_size_factor;
+		for (int x = 0; x < m_figure_points.size(); x++)
 		{
-			figure_points[x] = size_factor * asteroid_points_state[x];
+			m_figure_points[x] = m_size_factor * m_asteroid_points_state[x];
 		}
 	}
-	if (asteroid_state == SMALL)
+	if (m_asteroid_state == SMALL)
 	{
-		radius = 30.0f * size_factor;
-		for (int x = 0; x < figure_points.size(); x++)
+		m_radius = RADIUS * m_size_factor;
+		for (int x = 0; x < m_figure_points.size(); x++)
 		{
-			figure_points[x] = size_factor * asteroid_points_state[x];
+			m_figure_points[x] = m_size_factor * m_asteroid_points_state[x];
 		}
 	}
 }
@@ -137,31 +137,31 @@ void Asteroid::ChangeSize()
 {
 	/*this is the changesize code, it have the small to big for the debugging mode, when you can change
 	the asteroid size*/
-	if(asteroid_state == SMALL)
+	if(m_asteroid_state == SMALL)
 	{
-		size_factor = 1.0f;
-		asteroid_state = BIG;
+		m_asteroid_state = BIG;
+		m_size_factor = (float)m_asteroid_state/4.0f;
 	} 
-	else if (asteroid_state == MEDIUM)
+	else if (m_asteroid_state == MEDIUM)
 	{
-		size_factor = 0.5f;
-		asteroid_state = SMALL;
+		m_asteroid_state = SMALL;
+		m_size_factor = (float)m_asteroid_state / 4.0f;
 	}
-	else if (asteroid_state == BIG)
+	else if (m_asteroid_state == BIG)
 	{
-		size_factor = 0.75f;
-		asteroid_state = MEDIUM;
+		m_asteroid_state = MEDIUM;
+		m_size_factor = (float)m_asteroid_state / 4.0f;
 	}
 }
 
 int Asteroid::GetSize()
 {
-	return asteroid_state;
+	return m_asteroid_state;
 }
 
 void Asteroid::AssignOrientation(int random_number)
 {
-	angle_degree = (float) (random_number % 360);
+	m_angle_degree = (float) (random_number % 360);
 }
 
 void Asteroid::AssignPosition(int random_number_x, int random_number_y)
@@ -169,8 +169,8 @@ void Asteroid::AssignPosition(int random_number_x, int random_number_y)
 	/*assing the random position with the values, for it to be more random if the number is even the
 	position is negative, and if it's odd it would be positive*/
 	float LC_pos_x, LC_pos_y;
-	LC_pos_x = (float)(random_number_x % 201 + 100);
-	LC_pos_y = (float)(random_number_y % 201 + 100);
+	LC_pos_x = (float)(random_number_x % MAX_SPAWN_POSITION + MIN_SPAWN_POSITION);
+	LC_pos_y = (float)(random_number_y % MAX_SPAWN_POSITION + MIN_SPAWN_POSITION);
 	if (random_number_x % 2 == 0)
 	{
 		LC_pos_x *= -1;
@@ -179,12 +179,12 @@ void Asteroid::AssignPosition(int random_number_x, int random_number_y)
 	{
 		LC_pos_y *= -1;
 	}
-	origin = Vector2(LC_pos_x, LC_pos_y);
+	m_origin = Vector2(LC_pos_x, LC_pos_y);
 }
 
 void Asteroid::AssignPosition(Vector2 position)
 {
-	origin = position;
+	m_origin = position;
 }
 
 void Asteroid::DebugLine(const Vector2 player)
@@ -194,37 +194,37 @@ void Asteroid::DebugLine(const Vector2 player)
 	will be rotating*/
 	glLoadIdentity();
 	glBegin(GL_LINE_STRIP);
-	glVertex2f(origin.x, origin.y);
+	glVertex2f(m_origin.x, m_origin.y);
 	glVertex2f(player.x, player.y);
 	glEnd();
 }
 
 bool Asteroid::Colide()
 {
-	return colide;
+	return m_colide;
 }
 
 void Asteroid::AssignColide(bool state)
 {
-	colide = state;
+	m_colide = state;
 }
 
 bool Asteroid::CloseToShip()
 {
-	return close_to_ship;
+	return m_close_to_ship;
 }
 
 void Asteroid::CheckShipDistance(bool state)
 {
-	close_to_ship = state;
+	m_close_to_ship = state;
 }
 
 bool Asteroid::CloseToBullet()
 {
-	return close_to_bullet;
+	return m_close_to_bullet;
 }
 
 void Asteroid::CheckBulletDistance(bool state)
 {
-	close_to_bullet = state;
+	m_close_to_bullet = state;
 }

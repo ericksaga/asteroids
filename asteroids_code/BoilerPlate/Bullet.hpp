@@ -18,5 +18,5 @@ public:
 private:
 	void BulletRender();
 	//members
-	int screen_time;
+	int m_screen_time;
 };

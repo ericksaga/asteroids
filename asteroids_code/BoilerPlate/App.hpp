@@ -15,6 +15,9 @@
 #include "Bullet.hpp"
 
 const int FRAME_LIMIT = 10;
+const float FRAME_SCALE_Y = 10000.0f;
+const float FRAME_SCALE_X = 20.0f;
+
 
 namespace Engine
 {
@@ -58,8 +61,8 @@ namespace Engine
 		void OnExit							( ) override;
 		void OnKeyDown						( SDL_KeyboardEvent keyBoardEvent ) override;
 		void OnKeyUp						( SDL_KeyboardEvent keyBoardEvent ) override;
-		void GenerateAsteroid				(Asteroid*);
-		void GenerateAsteroidWithPosition	(Asteroid*, Vector2);
+		void GenerateAsteroid				();
+		void GenerateAsteroidWithPosition	(Vector2, int);
 		void LoadEntity						();
 		void CheckCollision					();
 		void DebugCollision					();
@@ -87,12 +90,12 @@ namespace Engine
 		SDL_GLContext						m_context;
 		GameState::State					m_state;
 		Engine::TimeManager*				m_timer;
-		Player*								player;
-		std::vector<Asteroid*>				asteroid;
-		std::vector<Bullet*>				bullet;
-		Vector2								frames[10];
-		int									frame_pos;
-		double								delta_time;
+		Player*								m_player;
+		std::vector<Asteroid*>				m_asteroid;
+		std::vector<Bullet*>				m_bullet;
+		Vector2								m_frames[10];
+		int									m_frame_pos;
+		double								m_delta_time;
 	};
 }
 #endif /* GAME_HPP */
