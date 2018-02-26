@@ -4,9 +4,6 @@
 
 #include "Palet.h"
 
-#include "Player.hpp"
-#include "Asteroid.hpp"
-
 // OpenGL includes
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
@@ -17,8 +14,6 @@ namespace Engine
 	const float DESIRED_FRAME_TIME = 1.0f / DESIRED_FRAME_RATE;
 	Palet change;
 	Color stats(0.1f, 0.1f, 0.15f, 1.0f);
-	Player player;
-	Asteroid enemy(Vector2(130.0f, 120.0f), 30.0f);
 
 	App::App(const std::string& title, const int width, const int height)
 		: m_title(title)
@@ -28,13 +23,16 @@ namespace Engine
 		, m_timer(new TimeManager)
 		, m_mainWindow(nullptr)
 	{
+		srand((int)time(0));
 		m_state = GameState::UNINITIALIZED;
 		m_lastFrameTime = m_timer->GetElapsedTimeInSeconds();
+		LoadEntity();
 	}
 
 	App::~App()
 	{
 		CleanupSDL();
+		EntityCleaner();
 	}
 
 	void App::Execute()
@@ -89,15 +87,14 @@ namespace Engine
 	{		
 		switch (keyBoardEvent.keysym.scancode)
 		{
-
 		case SDL_SCANCODE_W:
-			player.MoveForward();
+			m_player->MoveForward();
 			break;
 		case SDL_SCANCODE_A:
-			player.RotateLeft();
+			m_player->RotateLeft();
 			break;
 		case SDL_SCANCODE_D:
-			player.RotateRight();
+			m_player->RotateRight();
 			break;
 		default:			
 			SDL_Log("%S was pressed.", keyBoardEvent.keysym.scancode);
@@ -125,11 +122,98 @@ namespace Engine
 			stats = change.DarkBlueScreen();
 			break;
 		case SDL_SCANCODE_S:
-			enemy.ChangeSizeForTest();
+			if (debug)
+			{
+				for (int x = 0; x < m_asteroid.size(); x++)
+				{
+					m_asteroid[x]->ChangeSize();
+				}
+			}
+			break;
+		case SDL_SCANCODE_Q:
+			GenerateAsteroid();
+			break;
+		case SDL_SCANCODE_E:
+			if (m_asteroid.size() >= 1)
+			{
+				m_asteroid.pop_back();
+			}
+			break;
+		case SDL_SCANCODE_R:
+			if (debug)
+			{
+				debug = false;
+			}
+			else
+			{
+				debug = true;
+				m_player->dead = false;
+			}
+			break;
+		case SDL_SCANCODE_T:
+			delete m_player;
+			m_player = new Player();
+			break;
+		case SDL_SCANCODE_SPACE:
+			if (!m_player->dead)
+			{
+				m_bullet.push_back(new Bullet(m_player->GetEntityAngle(), m_player));
+			}
+			break;
+		case SDL_SCANCODE_F:
+			if (frame)
+			{
+				frame = false;
+			}
+			else
+			{
+				frame = true;
+			}
+			SDL_Log("%f was pressed.", m_delta_time);
 			break;
 		default:
 			//DO NOTHING
 			break;
+		}
+	}
+
+	void App::UpdateEntity()
+	{
+		m_player->Update(m_width, m_height, (float)m_delta_time);
+		//update the player debugging state
+		m_player->ChangeDebuggingState(debug);
+		for (int x = 0; x < m_asteroid.size();x++)
+		{
+			m_asteroid[x]->Update(m_width, m_height, (float)m_delta_time);
+			//update the asteroid debugging state
+			m_asteroid[x]->ChangeDebuggingState(debug);
+		}
+		for (int x = 0; x < m_bullet.size(); x++)
+		{
+			m_bullet[x]->Update(m_width, m_height, (float)m_delta_time);
+			//update the bullet debugging state
+			m_bullet[x]->ChangeDebuggingState(debug);
+		}
+		//check collisions on normal gameplay
+		if (!debug)
+		{
+			CheckCollision();
+		}
+		//check collision in debugging mode
+		if (debug)
+		{
+			DebugCollision();
+		}
+		BulletCleanUp();
+	}
+
+	void App::UpdateFrame()
+	{
+		m_frames[m_frame_pos] = Vector2((float)m_frame_pos, (float)m_delta_time);
+		m_frame_pos++;
+		if (m_frame_pos >= FRAME_LIMIT)
+		{
+			m_frame_pos = 0;
 		}
 	}
 
@@ -139,29 +223,78 @@ namespace Engine
 
 		// Update code goes here
 		//
-		player.Update(m_width, m_height);
-		enemy.Update(m_width, m_height);
+		UpdateEntity();
 		double endTime = m_timer->GetElapsedTimeInSeconds();
 		double nextTimeFrame = startTime + DESIRED_FRAME_TIME;
-
+		
+		m_delta_time = DESIRED_FRAME_TIME - (endTime - startTime);
+		UpdateFrame();
 		while (endTime < nextTimeFrame)
 		{
 			// Spin lock
 			endTime = m_timer->GetElapsedTimeInSeconds();
 		}
 		//double elapsedTime = endTime - startTime;        
-
 		m_lastFrameTime = m_timer->GetElapsedTimeInSeconds();
 
 		m_nUpdates++;
+	}
+	
+	void App::FrameRender()
+	{
+		glColor3f(0.0f, 1.0f, 1.0f);
+		glLoadIdentity();
+		glTranslatef(100.0f, 100.0f, 0.0f);
+		//space render
+		glBegin(GL_LINE_STRIP);
+		glVertex2f(0.0f, 200.0f);
+		glVertex2f(0.0f, 0.0f);
+		glVertex2f(200.0f, 0.0f);
+		glEnd();
+		//stadistic render
+		glBegin(GL_LINE_STRIP);
+		for (int x = 0; x < FRAME_LIMIT; x++)
+		{
+			glVertex2f(FRAME_SCALE_X*m_frames[x].x, FRAME_SCALE_Y*(DESIRED_FRAME_TIME - m_frames[x].y));
+		}
+		glEnd();
+	}
+
+	void App::RenderEntity()
+	{
+		m_player->Render();
+		for (int x = 0; x < m_asteroid.size(); x++)
+		{
+			m_asteroid[x]->Render();
+			if (m_asteroid[x]->CloseToShip())
+			{
+				//trace the line to the player
+				m_asteroid[x]->DebugLine(m_player->GetOrigin());
+			}
+			if (m_asteroid[x]->CloseToBullet())
+			{
+				DebugBulletCollision(x);
+			}
+			//clear line and color marks
+			m_asteroid[x]->CheckShipDistance(false);
+			m_asteroid[x]->AssignColide(false);
+			m_asteroid[x]->CheckBulletDistance(false);
+		}
+		for (int x = 0; x < m_bullet.size(); x++)
+		{
+			m_bullet[x]->Render();
+		}
 	}
 
 	void App::Render()
 	{
 		glClearColor(stats.red, stats.green, stats.blue, stats.alpha);
 		glClear(GL_COLOR_BUFFER_BIT);
-		player.Render();
-		enemy.Render();
+		RenderEntity();
+		if (frame)
+		{
+			FrameRender();
+		}
 		SDL_GL_SwapWindow(m_mainWindow);
 	}
 
@@ -254,6 +387,22 @@ namespace Engine
 		SDL_Quit();
 	}
 
+	void App::EntityCleaner()
+	{
+		//delete all entity on App destroyer
+		delete m_player;
+		for (int x = 0; x < m_asteroid.size(); x++)
+		{
+			delete m_asteroid[x];
+		}
+		for (int x = 0; x < m_bullet.size(); x++)
+		{
+			delete m_bullet[x];
+		}
+		m_asteroid.clear();
+		m_bullet.clear();
+	}
+
 	void App::OnResize(int width, int height)
 	{
 		// TODO: Add resize functionality
@@ -273,5 +422,178 @@ namespace Engine
 		// Cleanup SDL pointers
 		//
 		CleanupSDL();
+	}
+	
+	void App::GenerateAsteroid()
+	{
+		//generate a random angle and postion for the asteroid
+		m_asteroid.push_back(new Asteroid());
+		m_asteroid[m_asteroid.size() - 1]->AssignOrientation(rand());
+		m_asteroid[m_asteroid.size() - 1]->AssignPosition(rand(), rand());
+	}
+
+	void App::GenerateAsteroidWithPosition(Vector2 position, int state)
+	{
+		//generate a random angle for the asteroid
+		m_asteroid.push_back(new Asteroid(state));
+		m_asteroid[m_asteroid.size() - 1]->AssignOrientation(rand());
+		m_asteroid[m_asteroid.size() - 1]->AssignPosition(position);
+	}
+
+	bool App::PlayerCollision(int asteroid_position)
+	{
+		//get the distance between the player and every asteroid on the screen
+		float LC_distance = m_player->GetOrigin().VectorialDistance(m_asteroid[asteroid_position]->GetOrigin());
+		if (LC_distance <= m_player->GetEntityRadius() + m_asteroid[asteroid_position]->GetEntityRadius())
+		{
+			m_player->dead = true;
+			//check asteroid size is different from small
+			if (m_asteroid[asteroid_position]->GetSize() != 1)
+			{
+				/*if it's different change the size and create a new asteroid in the same position with
+				the same state*/
+				m_asteroid[asteroid_position]->ChangeSize();
+				int LC_state = m_asteroid[asteroid_position]->GetSize();
+				GenerateAsteroidWithPosition(m_asteroid[asteroid_position]->GetOrigin(), 
+					m_asteroid[asteroid_position]->GetSize());
+			}
+			else
+			{
+				//if it's small the asteroids is deleted and remove the asteroid from the vector
+				delete m_asteroid[asteroid_position];
+				m_asteroid.erase(m_asteroid.begin() + asteroid_position);
+			}
+			//only one collision is necesary in the player or bullet case
+			return true;
+		}
+		return false;
+	}
+
+	bool App::BulletCollision(int asteroid_position)
+	{
+		for (int x = 0; x < m_bullet.size(); x++)
+		{
+			//get the distance between every bullet and every asteroid on the screen
+			float LC_distance = m_bullet[x]->GetOrigin().VectorialDistance(m_asteroid[asteroid_position]->GetOrigin());
+			if (LC_distance <= m_bullet[x]->GetEntityRadius() + m_asteroid[asteroid_position]->GetEntityRadius())
+			{
+				//erase the colliding bullet
+				m_bullet.erase(m_bullet.begin() + x);
+				//check asteroid size is different from small
+				if (m_asteroid[asteroid_position]->GetSize() != 1)
+				{
+					/*if it's different change the size and create a new asteroid in the same position with
+					the same state*/
+					m_asteroid[asteroid_position]->ChangeSize();
+					int LC_state = m_asteroid[asteroid_position]->GetSize();
+					GenerateAsteroidWithPosition(m_asteroid[asteroid_position]->GetOrigin(),
+						m_asteroid[asteroid_position]->GetSize());
+				}
+				else
+				{
+					//if it's small the asteroids is deleted and remove the asteroid from the vector
+					delete m_asteroid[asteroid_position];
+					m_asteroid.erase(m_asteroid.begin() + asteroid_position);
+				}
+				//only one collision is necesary in the player or bullet case
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void App::CheckCollision()
+	{
+		//check the collisions with the asteroids for player and bullet
+		for (int pos = 0; pos < m_asteroid.size(); pos++)
+		{
+			if (BulletCollision(pos))
+			{
+				break;
+			}
+			if (!m_player->dead && PlayerCollision(pos))
+			{
+				break;
+			}
+		}
+	}
+
+	void App::DebugPlayerCollision(int asteroid_position)
+	{
+		//get the distance between the player and every asteroid on the screen
+		float LC_distance = m_player->GetOrigin().VectorialDistance(m_asteroid[asteroid_position]->GetOrigin());
+		/*check in a 2 times radius of the player if it's on range the asteroid get marked and
+		render a line between the ship and the asteroid*/
+		if (LC_distance <= 2 * m_player->GetEntityRadius() + m_asteroid[asteroid_position]->GetEntityRadius())
+		{
+			//marked for render the line to player
+			m_asteroid[asteroid_position]->CheckShipDistance(true);
+		}
+		//if the asteroid is on colision range it gets marked and render the asteroid red
+		if (LC_distance <= m_player->GetEntityRadius() + m_asteroid[asteroid_position]->GetEntityRadius())
+		{
+			//marked for red color
+			m_asteroid[asteroid_position]->AssignColide(true);
+		}
+	}
+
+	void App::DebugBulletCollision(int asteroid_position)
+	{
+		for (int x = 0; x < m_bullet.size(); x++)
+		{
+			//get the distance between the bullets and every asteroid on the screen
+			float LC_distance = m_bullet[x]->GetOrigin().VectorialDistance(m_asteroid[asteroid_position]->GetOrigin());
+			/*check in a 2 times radius of the player if it's on range the asteroid get marked and
+			render a line between the ship and the asteroid*/
+			if (LC_distance <= 2 * m_bullet[x]->GetEntityRadius() + m_asteroid[asteroid_position]->GetEntityRadius())
+			{
+				//mark the bullet and render the line between the colliding bullet and the asteroid
+				m_asteroid[asteroid_position]->CheckBulletDistance(true);
+				//it doesnt render on update, only when called on render
+				m_asteroid[asteroid_position]->DebugLine(m_bullet[x]->GetOrigin());
+			}
+			if (LC_distance <= m_bullet[x]->GetEntityRadius() + m_asteroid[asteroid_position]->GetEntityRadius())
+			{
+				//marked for red color
+				m_asteroid[asteroid_position]->AssignColide(true);
+			}
+		}
+	}
+
+	void App::DebugCollision()
+	{
+		//check collision on debugging
+		for (int pos = 0; pos < m_asteroid.size(); pos++)
+		{
+			DebugPlayerCollision(pos);
+			DebugBulletCollision(pos);
+		}
+	}
+
+	void App::BulletCleanUp()
+	{
+		//cleanup expired bullets
+		for (int x = 0; x < m_bullet.size(); x++)
+		{
+			if (m_bullet[x]->GetScreenTime() >= MAX_SCREEN_TIME)
+			{
+				m_bullet.erase(m_bullet.begin() + x);
+				break;
+			}
+		}
+	}
+
+	void App::LoadEntity()
+	{
+		//Load game initial state
+		debug = false;
+		m_player = new Player();
+		GenerateAsteroid();
+		for (int x = 0; x < FRAME_LIMIT; x++)
+		{
+			m_frames[x] = Vector2((float)x, 0.0f);
+		}
+		m_frame_pos = 0;
+		m_delta_time = DESIRED_FRAME_RATE;
 	}
 }

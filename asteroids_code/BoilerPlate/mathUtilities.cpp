@@ -181,3 +181,4 @@ float MathUtilities::AngleNormalizeRadian(float target)
 	}
 	return target;
 }
+
