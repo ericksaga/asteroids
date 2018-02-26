@@ -244,7 +244,7 @@ namespace Engine
 	{
 		glColor3f(0.0f, 1.0f, 1.0f);
 		glLoadIdentity();
-		glTranslatef(100.0f, 100.0f, 0.0f);
+		glTranslatef(200.0f, -200.0f, 0.0f);
 		//space render
 		glBegin(GL_LINE_STRIP);
 		glVertex2f(0.0f, 200.0f);
