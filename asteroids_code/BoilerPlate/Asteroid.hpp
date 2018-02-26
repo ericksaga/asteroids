@@ -19,6 +19,8 @@ public:
 	void AssignColide(bool);
 	bool CloseToShip();
 	void CheckShipDistance(bool);
+	bool CloseToBullet();
+	void CheckBulletDistance(bool);
 	//@-override
 	void MoveForward(const float);
 	void Update(const int, const int, const float);
@@ -42,5 +44,6 @@ private:
 	float size_factor;
 	bool colide;
 	bool close_to_ship;
+	bool close_to_bullet;
 	std::vector <Vector2> asteroid_points_state;
 };

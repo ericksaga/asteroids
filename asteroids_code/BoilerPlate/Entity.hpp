@@ -14,8 +14,9 @@ public:
 	virtual void MoveForward();
 	void RenderCircle();
 	void ActivateDebugMode();
-	float GetEntityRadius();
 	void ChangeDebuggingState(bool);
+	float GetEntityRadius();
+	float GetEntityAngle();
 	bool DebuggingState();
 	Vector2 GetOrigin();
 protected:

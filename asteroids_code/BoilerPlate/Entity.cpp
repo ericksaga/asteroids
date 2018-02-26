@@ -91,3 +91,8 @@ bool Entity::DebuggingState()
 {
 	return debugging;
 }
+
+float Entity::GetEntityAngle()
+{
+	return angle_degree;
+}

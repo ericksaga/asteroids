@@ -13,6 +13,7 @@ Asteroid::Asteroid()
 	radius = 30.0f;
 	colide = false;
 	close_to_ship = false;
+	close_to_bullet = false;
 	figure_points.push_back(Vector2(0.0f, 30.0f));
 	figure_points.push_back(Vector2(0.0f, 10.0f));
 	figure_points.push_back(Vector2(-15.0f, 0.0f));
@@ -44,6 +45,7 @@ Asteroid::Asteroid(int size)
 	radius = 30.0f;
 	colide = false;
 	close_to_ship = false;
+	close_to_bullet = false;
 	figure_points.push_back(Vector2(0.0f, 30.0f));
 	figure_points.push_back(Vector2(0.0f, 10.0f));
 	figure_points.push_back(Vector2(-15.0f, 0.0f));
@@ -215,4 +217,14 @@ bool Asteroid::CloseToShip()
 void Asteroid::CheckShipDistance(bool state)
 {
 	close_to_ship = state;
+}
+
+bool Asteroid::CloseToBullet()
+{
+	return close_to_bullet;
+}
+
+void Asteroid::CheckBulletDistance(bool state)
+{
+	close_to_bullet = state;
 }

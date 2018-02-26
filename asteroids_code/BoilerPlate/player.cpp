@@ -67,11 +67,13 @@ void Player::MoveForward()
 void Player::RotateLeft()
 {
 	angle_degree += ROTATION_ANGLE;
+	math_master.AngleNormalizeDegree(angle_degree);
 }
 
 void Player::RotateRight()
 {
 	angle_degree -= ROTATION_ANGLE;
+	math_master.AngleNormalizeDegree(angle_degree);
 }
 
 Player::Player()

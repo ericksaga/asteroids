@@ -4,8 +4,6 @@
 
 #include "Palet.h"
 
-
-
 // OpenGL includes
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
@@ -32,6 +30,7 @@ namespace Engine
 		player = new Player();
 		asteroid.push_back(new Asteroid());
 		GenerateAsteroid(asteroid[0]);
+		frame_pos = 0;
 	}
 
 	App::~App()
@@ -42,7 +41,12 @@ namespace Engine
 		{
 			delete asteroid[x];
 		}
+		for (int x = 0; x < bullet.size(); x++)
+		{
+			delete bullet[x];
+		}
 		asteroid.clear();
+		bullet.clear();
 	}
 
 	void App::Execute()
@@ -164,18 +168,21 @@ namespace Engine
 		case SDL_SCANCODE_T:
 			delete player;
 			player = new Player();
+			break;
+		case SDL_SCANCODE_SPACE:
+			if (!player->dead)
+			{
+				bullet.push_back(new Bullet(player->GetEntityAngle(), player));
+			}
+			break;
 		default:
 			//DO NOTHING
 			break;
 		}
 	}
 
-	void App::Update()
+	void App::UpdateEntity()
 	{
-		double startTime = m_timer->GetElapsedTimeInSeconds();
-
-		// Update code goes here
-		//
 		player->Update(m_width, m_height, DESIRED_FRAME_TIME);
 		//update the player debugging state
 		player->ChangeDebuggingState(debug);
@@ -185,8 +192,14 @@ namespace Engine
 			//update the asteroid debugging state
 			asteroid[x]->ChangeDebuggingState(debug);
 		}
+		for (int x = 0; x < bullet.size(); x++)
+		{
+			bullet[x]->Update(m_width, m_height, DESIRED_FRAME_TIME);
+			//update the bullet debugging state
+			bullet[x]->ChangeDebuggingState(debug);
+		}
 		//check collisions on normal gameplay
-		if (!player->dead && !debug)
+		if (!debug)
 		{
 			CheckCollision();
 		}
@@ -195,6 +208,16 @@ namespace Engine
 		{
 			DebugCollision();
 		}
+		BulletCleanUp();
+	}
+
+	void App::Update()
+	{
+		double startTime = m_timer->GetElapsedTimeInSeconds();
+
+		// Update code goes here
+		//
+		UpdateEntity();
 		double endTime = m_timer->GetElapsedTimeInSeconds();
 		double nextTimeFrame = startTime + DESIRED_FRAME_TIME;
 
@@ -209,11 +232,9 @@ namespace Engine
 
 		m_nUpdates++;
 	}
-
-	void App::Render()
+	
+	void App::RenderEntity()
 	{
-		glClearColor(stats.red, stats.green, stats.blue, stats.alpha);
-		glClear(GL_COLOR_BUFFER_BIT);
 		player->Render();
 		for (int x = 0; x < asteroid.size(); x++)
 		{
@@ -223,10 +244,26 @@ namespace Engine
 				//trace the line to the player
 				asteroid[x]->DebugLine(player->GetOrigin());
 			}
+			if (asteroid[x]->CloseToBullet())
+			{
+				DebugBulletCollision(x);
+			}
 			//clear line and color marks
 			asteroid[x]->CheckShipDistance(false);
 			asteroid[x]->AssignColide(false);
+			asteroid[x]->CheckBulletDistance(false);
 		}
+		for (int x = 0; x < bullet.size(); x++)
+		{
+			bullet[x]->Render();
+		}
+	}
+
+	void App::Render()
+	{
+		glClearColor(stats.red, stats.green, stats.blue, stats.alpha);
+		glClear(GL_COLOR_BUFFER_BIT);
+		RenderEntity();
 		SDL_GL_SwapWindow(m_mainWindow);
 	}
 
@@ -354,54 +391,136 @@ namespace Engine
 		target->AssignPosition(position);
 	}
 
-	void App::CheckCollision()
+	bool App::PlayerCollision(int asteroid_position)
 	{
-		float LC_distance;
-		for (int x = 0; x < asteroid.size(); x++)
+		//get the distance between the player and every asteroid on the screen
+		float LC_distance = player->GetOrigin().VectorialDistance(asteroid[asteroid_position]->GetOrigin());
+		if (LC_distance <= player->GetEntityRadius() + asteroid[asteroid_position]->GetEntityRadius())
 		{
-			//get the distance between the player and every asteroid on the screen
-			LC_distance = player->GetOrigin().VectorialDistance(asteroid[x]->GetOrigin());
-			if (LC_distance <= player->GetEntityRadius() + asteroid[x]->GetEntityRadius())
+			player->dead = true;
+			//check asteroid size is different from small
+			if (asteroid[asteroid_position]->GetSize() != 1)
 			{
-				player->dead = true;
+				/*if it's different change the size and create a new asteroid in the same position with
+				the same state*/
+				asteroid[asteroid_position]->ChangeSize();
+				int LC_state = asteroid[asteroid_position]->GetSize();
+				asteroid.push_back(new Asteroid(LC_state));
+				GenerateAsteroidWithPosition(asteroid[asteroid.size() - 1], 
+					asteroid[asteroid_position]->GetOrigin());
+			}
+			else
+			{
+				//if it's small the asteroids is deleted and remove the asteroid from the vector
+				delete asteroid[asteroid_position];
+				asteroid.erase(asteroid.begin() + asteroid_position);
+			}
+			//only one collision is necesary in the player or bullet case
+			return true;
+		}
+		return false;
+	}
+
+	bool App::BulletCollision(int asteroid_position)
+	{
+		for (int x = 0; x < bullet.size(); x++)
+		{
+			//get the distance between every bullet and every asteroid on the screen
+			float LC_distance = bullet[x]->GetOrigin().VectorialDistance(asteroid[asteroid_position]->GetOrigin());
+			if (LC_distance <= bullet[x]->GetEntityRadius() + asteroid[asteroid_position]->GetEntityRadius())
+			{
+				bullet.erase(bullet.begin() + x);
 				//check asteroid size is different from small
-				if (asteroid[x]->GetSize() != 1)
+				if (asteroid[asteroid_position]->GetSize() != 1)
 				{
 					/*if it's different change the size and create a new asteroid in the same position with
-					the same state*/ 
-					asteroid[x]->ChangeSize();
-					int LC_state = asteroid[x]->GetSize();
+					the same state*/
+					asteroid[asteroid_position]->ChangeSize();
+					int LC_state = asteroid[asteroid_position]->GetSize();
 					asteroid.push_back(new Asteroid(LC_state));
-					GenerateAsteroidWithPosition(asteroid[asteroid.size() - 1], asteroid[x]->GetOrigin());
+					GenerateAsteroidWithPosition(asteroid[asteroid.size() - 1],
+					asteroid[asteroid_position]->GetOrigin());
 				}
 				else
 				{
 					//if it's small the asteroids is deleted and remove the asteroid from the vector
-					delete asteroid[x];
-					asteroid.erase(asteroid.begin() + x);
+					delete asteroid[asteroid_position];
+					asteroid.erase(asteroid.begin() + asteroid_position);
 				}
-				//only one colision is necesary in the player or bullet case
+				//only one collision is necesary in the player or bullet case
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void App::CheckCollision()
+	{
+		for (int pos = 0; pos < asteroid.size(); pos++)
+		{
+			if (BulletCollision(pos))
+			{
+				break;
+			}
+			if (!player->dead && PlayerCollision(pos))
+			{
 				break;
 			}
 		}
 	}
+
+	void App::DebugPlayerCollision(int asteroid_position)
+	{
+		
+		//get the distance between the player and every asteroid on the screen
+		float LC_distance = player->GetOrigin().VectorialDistance(asteroid[asteroid_position]->GetOrigin());
+		/*check in a 2 times radius of the player if it's on range the asteroid get marked and
+		render a line between the ship and the asteroid*/
+		if (LC_distance <= 2 * player->GetEntityRadius() + asteroid[asteroid_position]->GetEntityRadius())
+		{
+			asteroid[asteroid_position]->CheckShipDistance(true);
+		}
+		//if the asteroid is on colision range it gets marked and render the asteroid red
+		if (LC_distance <= player->GetEntityRadius() + asteroid[asteroid_position]->GetEntityRadius())
+		{
+			asteroid[asteroid_position]->AssignColide(true);
+		}
+	}
+
+	void App::DebugBulletCollision(int asteroid_position)
+	{
+		for (int x = 0; x < bullet.size(); x++)
+		{
+			float LC_distance = bullet[x]->GetOrigin().VectorialDistance(asteroid[asteroid_position]->GetOrigin());
+			if (LC_distance <= 2 * bullet[x]->GetEntityRadius() + asteroid[asteroid_position]->GetEntityRadius())
+			{
+				asteroid[asteroid_position]->CheckBulletDistance(true);
+				asteroid[asteroid_position]->DebugLine(bullet[x]->GetOrigin());
+			}
+			if (LC_distance <= bullet[x]->GetEntityRadius() + asteroid[asteroid_position]->GetEntityRadius())
+			{
+				asteroid[asteroid_position]->AssignColide(true);
+			}
+		}
+	}
+
 	void App::DebugCollision()
 	{
-		float LC_distance;
-		for (int x = 0; x < asteroid.size(); x++)
+		for (int pos = 0; pos < asteroid.size(); pos++)
 		{
-			//get the distance between the player and every asteroid on the screen
-			LC_distance = player->GetOrigin().VectorialDistance(asteroid[x]->GetOrigin());
-			/*check in a 2 times radius of the player if it's on range the asteroid get marked and
-			render a line between the ship and the asteroid*/
-			if (LC_distance <= 2 * player->GetEntityRadius() + asteroid[x]->GetEntityRadius())
+			DebugPlayerCollision(pos);
+			DebugBulletCollision(pos);
+		}
+	}
+
+	void App::BulletCleanUp()
+	{
+		for (int x = 0; x < bullet.size(); x++)
+		{
+			if (bullet[x]->GetScreenTime() >= MAX_SCREEN_TIME)
 			{
-				asteroid[x]->CheckShipDistance(true);
-			}
-			//if the asteroid is on colision range it gets marked and render the asteroid red
-			if (LC_distance <= player->GetEntityRadius() + asteroid[x]->GetEntityRadius())
-			{
-				asteroid[x]->AssignColide(true);
+				bullet.erase(bullet.begin() + x);
+				break;
 			}
 		}
 	}

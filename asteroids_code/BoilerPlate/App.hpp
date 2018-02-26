@@ -12,6 +12,7 @@
 #include "TimeManager.hpp"
 #include "Player.hpp"
 #include "Asteroid.hpp"
+#include "Bullet.hpp"
 
 namespace Engine
 {
@@ -58,7 +59,14 @@ namespace Engine
 		void GenerateAsteroid				(Asteroid*);
 		void GenerateAsteroidWithPosition	(Asteroid*, Vector2);
 		void CheckCollision					();
-		void DebugCollision();
+		void DebugCollision					();
+		void UpdateEntity					();
+		void RenderEntity					();
+		void BulletCleanUp					();
+		void DebugPlayerCollision			(int);
+		void DebugBulletCollision			(int);
+		bool PlayerCollision				(int);
+		bool BulletCollision				(int);
 		/* =============================================================
 		 * MEMBERS
 		 * ============================================================= */
@@ -74,6 +82,9 @@ namespace Engine
 		Engine::TimeManager*				m_timer;
 		Player*								player;
 		std::vector<Asteroid*>				asteroid;
+		std::vector<Bullet*>				bullet;
+		Vector2								frames[10];
+		int									frame_pos;
 	};
 }
 #endif /* GAME_HPP */
