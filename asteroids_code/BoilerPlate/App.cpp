@@ -448,7 +448,7 @@ namespace Engine
 		{
 			m_player->dead = true;
 			//check asteroid size is different from small
-			if (m_asteroid[asteroid_position]->GetSize() != 1)
+			if (m_asteroid[asteroid_position]->GetSize() != 2)
 			{
 				/*if it's different change the size and create a new asteroid in the same position with
 				the same state*/
@@ -480,7 +480,7 @@ namespace Engine
 				//erase the colliding bullet
 				m_bullet.erase(m_bullet.begin() + x);
 				//check asteroid size is different from small
-				if (m_asteroid[asteroid_position]->GetSize() != 1)
+				if (m_asteroid[asteroid_position]->GetSize() != 2)
 				{
 					/*if it's different change the size and create a new asteroid in the same position with
 					the same state*/
