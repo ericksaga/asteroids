@@ -23,30 +23,16 @@ namespace Engine
 		, m_timer(new TimeManager)
 		, m_mainWindow(nullptr)
 	{
-		srand(time(0));
+		srand((int)time(0));
 		m_state = GameState::UNINITIALIZED;
 		m_lastFrameTime = m_timer->GetElapsedTimeInSeconds();
-		debug = false;
-		player = new Player();
-		asteroid.push_back(new Asteroid());
-		GenerateAsteroid(asteroid[0]);
-		frame_pos = 0;
+		LoadEntity();
 	}
 
 	App::~App()
 	{
 		CleanupSDL();
-		delete player;
-		for (int x = 0; x < asteroid.size(); x++)
-		{
-			delete asteroid[x];
-		}
-		for (int x = 0; x < bullet.size(); x++)
-		{
-			delete bullet[x];
-		}
-		asteroid.clear();
-		bullet.clear();
+		EntityCleaner();
 	}
 
 	void App::Execute()
@@ -175,6 +161,17 @@ namespace Engine
 				bullet.push_back(new Bullet(player->GetEntityAngle(), player));
 			}
 			break;
+		case SDL_SCANCODE_F:
+			if (frame)
+			{
+				frame = false;
+			}
+			else
+			{
+				frame = true;
+			}
+			SDL_Log("%f was pressed.", delta_time);
+			break;
 		default:
 			//DO NOTHING
 			break;
@@ -183,18 +180,18 @@ namespace Engine
 
 	void App::UpdateEntity()
 	{
-		player->Update(m_width, m_height, DESIRED_FRAME_TIME);
+		player->Update(m_width, m_height, (float)delta_time);
 		//update the player debugging state
 		player->ChangeDebuggingState(debug);
 		for (int x = 0; x < asteroid.size();x++)
 		{
-			asteroid[x]->Update(m_width, m_height, DESIRED_FRAME_TIME);
+			asteroid[x]->Update(m_width, m_height, (float)delta_time);
 			//update the asteroid debugging state
 			asteroid[x]->ChangeDebuggingState(debug);
 		}
 		for (int x = 0; x < bullet.size(); x++)
 		{
-			bullet[x]->Update(m_width, m_height, DESIRED_FRAME_TIME);
+			bullet[x]->Update(m_width, m_height, (float)delta_time);
 			//update the bullet debugging state
 			bullet[x]->ChangeDebuggingState(debug);
 		}
@@ -211,6 +208,16 @@ namespace Engine
 		BulletCleanUp();
 	}
 
+	void App::UpdateFrame()
+	{
+		frames[frame_pos] = Vector2((float)frame_pos, (float)delta_time);
+		frame_pos++;
+		if (frame_pos >= FRAME_LIMIT)
+		{
+			frame_pos = 0;
+		}
+	}
+
 	void App::Update()
 	{
 		double startTime = m_timer->GetElapsedTimeInSeconds();
@@ -220,19 +227,40 @@ namespace Engine
 		UpdateEntity();
 		double endTime = m_timer->GetElapsedTimeInSeconds();
 		double nextTimeFrame = startTime + DESIRED_FRAME_TIME;
-
+		
+		delta_time = DESIRED_FRAME_TIME - (endTime - startTime);
+		UpdateFrame();
 		while (endTime < nextTimeFrame)
 		{
 			// Spin lock
 			endTime = m_timer->GetElapsedTimeInSeconds();
 		}
 		//double elapsedTime = endTime - startTime;        
-
 		m_lastFrameTime = m_timer->GetElapsedTimeInSeconds();
 
 		m_nUpdates++;
 	}
 	
+	void App::FrameRender()
+	{
+		glColor3f(0.0f, 1.0f, 1.0f);
+		glLoadIdentity();
+		glTranslatef(100.0f, 100.0f, 0.0f);
+		//space render
+		glBegin(GL_LINE_STRIP);
+		glVertex2f(0.0f, 50.0f);
+		glVertex2f(0.0f, -10.0f);
+		glVertex2f(100.0f, -10.0f);
+		glEnd();
+		//stadistic render
+		glBegin(GL_LINE_STRIP);
+		for (int x = 0; x < FRAME_LIMIT; x++)
+		{
+			glVertex2f(10.0f*frames[x].x, 1000.0f*frames[x].y);
+		}
+		glEnd();
+	}
+
 	void App::RenderEntity()
 	{
 		player->Render();
@@ -264,6 +292,10 @@ namespace Engine
 		glClearColor(stats.red, stats.green, stats.blue, stats.alpha);
 		glClear(GL_COLOR_BUFFER_BIT);
 		RenderEntity();
+		if (frame)
+		{
+			FrameRender();
+		}
 		SDL_GL_SwapWindow(m_mainWindow);
 	}
 
@@ -354,6 +386,21 @@ namespace Engine
 		SDL_DestroyWindow(m_mainWindow);
 
 		SDL_Quit();
+	}
+
+	void App::EntityCleaner()
+	{
+		delete player;
+		for (int x = 0; x < asteroid.size(); x++)
+		{
+			delete asteroid[x];
+		}
+		for (int x = 0; x < bullet.size(); x++)
+		{
+			delete bullet[x];
+		}
+		asteroid.clear();
+		bullet.clear();
 	}
 
 	void App::OnResize(int width, int height)
@@ -471,7 +518,6 @@ namespace Engine
 
 	void App::DebugPlayerCollision(int asteroid_position)
 	{
-		
 		//get the distance between the player and every asteroid on the screen
 		float LC_distance = player->GetOrigin().VectorialDistance(asteroid[asteroid_position]->GetOrigin());
 		/*check in a 2 times radius of the player if it's on range the asteroid get marked and
@@ -523,5 +569,19 @@ namespace Engine
 				break;
 			}
 		}
+	}
+
+	void App::LoadEntity()
+	{
+		debug = false;
+		player = new Player();
+		asteroid.push_back(new Asteroid());
+		GenerateAsteroid(asteroid[0]);
+		for (int x = 0; x < FRAME_LIMIT; x++)
+		{
+			frames[x] = Vector2((float)x, 0.0f);
+		}
+		frame_pos = 0;
+		delta_time = DESIRED_FRAME_RATE;
 	}
 }

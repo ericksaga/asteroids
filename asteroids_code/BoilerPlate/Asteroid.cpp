@@ -65,7 +65,7 @@ void Asteroid::Render()
 	float LC_real_angle = angle_degree + auto_rotate;
 	glTranslatef(origin.x, origin.y, 0.0f);
 	glRotatef(LC_real_angle, 0.0f, 0.0f, 1.0f);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor3f(0.9f, 0.9f, 0.9f);
 	//red asteroid if coliding, only on the debugging mode
 	if (colide)
 	{

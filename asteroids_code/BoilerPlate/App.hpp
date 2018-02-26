@@ -14,6 +14,8 @@
 #include "Asteroid.hpp"
 #include "Bullet.hpp"
 
+const int FRAME_LIMIT = 10;
+
 namespace Engine
 {
 	class App : public SDLEvent
@@ -58,10 +60,14 @@ namespace Engine
 		void OnKeyUp						( SDL_KeyboardEvent keyBoardEvent ) override;
 		void GenerateAsteroid				(Asteroid*);
 		void GenerateAsteroidWithPosition	(Asteroid*, Vector2);
+		void LoadEntity						();
 		void CheckCollision					();
 		void DebugCollision					();
 		void UpdateEntity					();
+		void UpdateFrame					();
 		void RenderEntity					();
+		void FrameRender					();
+		void EntityCleaner					();
 		void BulletCleanUp					();
 		void DebugPlayerCollision			(int);
 		void DebugBulletCollision			(int);
@@ -75,6 +81,7 @@ namespace Engine
 		int									m_nUpdates;
 		double								m_lastFrameTime;
 		bool								debug;
+		bool								frame;
 		std::string							m_title;
 		SDL_Window*							m_mainWindow;
 		SDL_GLContext						m_context;
@@ -85,6 +92,7 @@ namespace Engine
 		std::vector<Bullet*>				bullet;
 		Vector2								frames[10];
 		int									frame_pos;
+		double								delta_time;
 	};
 }
 #endif /* GAME_HPP */
