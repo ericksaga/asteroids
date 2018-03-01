@@ -36,6 +36,9 @@
     <ClCompile Include="Bullet.cpp">
       <Filter>Engine\Source files</Filter>
     </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>ex_utilities\Source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp" />
@@ -70,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="Bullet.hpp">
       <Filter>Engine\Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.hpp">
+      <Filter>ex_utilities\Header files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

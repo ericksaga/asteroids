@@ -11,6 +11,7 @@ public:
 	Player();
 	void RotateLeft();
 	void RotateRight();
+	std::vector<Vector2> GetShipPoints();
 	//-@override
 	void Update(const int, const int, const float);
 	void MoveForward();

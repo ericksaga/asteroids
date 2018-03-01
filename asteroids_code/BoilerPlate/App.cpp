@@ -6,7 +6,14 @@
 
 // OpenGL includes
 #include <GL/glew.h>
-#include <SDL2/SDL_opengl.h>
+#include <SDL_opengl.h>
+#include <SDL.h>
+
+#include <SDL_ttf.h>
+
+#include <irrKlang.h>
+
+irrklang::ISoundEngine *SoundEngine = irrklang::createIrrKlangDevice();
 
 namespace Engine
 {
@@ -27,6 +34,7 @@ namespace Engine
 		m_state = GameState::UNINITIALIZED;
 		m_lastFrameTime = m_timer->GetElapsedTimeInSeconds();
 		LoadEntity();
+		m_live_points = m_player->GetShipPoints();
 	}
 
 	App::~App()
@@ -65,12 +73,13 @@ namespace Engine
 	{
 		// Init the external dependencies
 		//
-		bool success = SDLInit() && GlewInit();
+		bool success = SDLInit() && GlewInit() && TTFInit();
 		if (!success)
 		{
 			m_state = GameState::INIT_FAILED;
 			return false;
 		}
+
 
 		// Setup the viewport
 		//
@@ -88,13 +97,13 @@ namespace Engine
 		switch (keyBoardEvent.keysym.scancode)
 		{
 		case SDL_SCANCODE_W:
-			m_player->MoveForward();
+			m_manager.SetW(true);
 			break;
 		case SDL_SCANCODE_A:
-			m_player->RotateLeft();
+			m_manager.SetA(true);
 			break;
 		case SDL_SCANCODE_D:
-			m_player->RotateRight();
+			m_manager.SetD(true);
 			break;
 		default:			
 			SDL_Log("%S was pressed.", keyBoardEvent.keysym.scancode);
@@ -122,7 +131,7 @@ namespace Engine
 			stats = change.DarkBlueScreen();
 			break;
 		case SDL_SCANCODE_S:
-			if (debug)
+			if (m_debug)
 			{
 				for (int x = 0; x < m_asteroid.size(); x++)
 				{
@@ -131,45 +140,65 @@ namespace Engine
 			}
 			break;
 		case SDL_SCANCODE_Q:
-			GenerateAsteroid();
+			if (m_debug)
+			{
+				GenerateAsteroid();
+			}
 			break;
 		case SDL_SCANCODE_E:
-			if (m_asteroid.size() >= 1)
+			if (m_asteroid.size() >= 1 && m_debug)
 			{
 				m_asteroid.pop_back();
 			}
 			break;
 		case SDL_SCANCODE_R:
-			if (debug)
+			if (m_debug)
 			{
-				debug = false;
+				m_debug = false;
 			}
 			else
 			{
-				debug = true;
+				m_debug = true;
 				m_player->dead = false;
 			}
 			break;
 		case SDL_SCANCODE_T:
-			delete m_player;
-			m_player = new Player();
+			if (!m_out_of_live && m_player->dead)
+			{
+				delete m_player;
+				m_player = new Player();
+			}
 			break;
 		case SDL_SCANCODE_SPACE:
 			if (!m_player->dead)
 			{
 				m_bullet.push_back(new Bullet(m_player->GetEntityAngle(), m_player));
+				SoundEngine->play2D("sounds/explosion.wav");
 			}
 			break;
 		case SDL_SCANCODE_F:
-			if (frame)
+			if (m_frame)
 			{
-				frame = false;
+				m_frame = false;
 			}
 			else
 			{
-				frame = true;
+				m_frame = true;
 			}
 			SDL_Log("%f was pressed.", m_delta_time);
+			break;
+		case SDL_SCANCODE_H:
+			EntityCleaner();
+			LoadEntity();
+			break;
+		case SDL_SCANCODE_W:
+			m_manager.SetW(false);
+			break;
+		case SDL_SCANCODE_A:
+			m_manager.SetA(false);
+			break;
+		case SDL_SCANCODE_D:
+			m_manager.SetD(false);
 			break;
 		default:
 			//DO NOTHING
@@ -177,34 +206,63 @@ namespace Engine
 		}
 	}
 
+	void App::ManageInput()
+	{
+		if (m_manager.GetW())
+		{
+			m_player->MoveForward();
+		}
+		if (m_manager.GetA())
+		{
+			m_player->RotateLeft();
+		}
+		if (m_manager.GetD())
+		{
+			m_player->RotateRight();
+		}
+	}
+
 	void App::UpdateEntity()
 	{
 		m_player->Update(m_width, m_height, (float)m_delta_time);
 		//update the player debugging state
-		m_player->ChangeDebuggingState(debug);
+		m_player->ChangeDebuggingState(m_debug);
 		for (int x = 0; x < m_asteroid.size();x++)
 		{
 			m_asteroid[x]->Update(m_width, m_height, (float)m_delta_time);
 			//update the asteroid debugging state
-			m_asteroid[x]->ChangeDebuggingState(debug);
+			m_asteroid[x]->ChangeDebuggingState(m_debug);
 		}
 		for (int x = 0; x < m_bullet.size(); x++)
 		{
 			m_bullet[x]->Update(m_width, m_height, (float)m_delta_time);
 			//update the bullet debugging state
-			m_bullet[x]->ChangeDebuggingState(debug);
+			m_bullet[x]->ChangeDebuggingState(m_debug);
 		}
 		//check collisions on normal gameplay
-		if (!debug)
+		if (!m_debug && !m_out_of_live)
 		{
 			CheckCollision();
 		}
 		//check collision in debugging mode
-		if (debug)
+		if (m_debug)
 		{
 			DebugCollision();
 		}
 		BulletCleanUp();
+		if (m_clear_screen)
+		{
+			m_clear_screen = false;
+			m_asteroids_count++;
+			for (int x = 0; x < m_asteroids_count; x++)
+			{
+				GenerateAsteroid();
+			}
+		}
+		if (m_live <= 0)
+		{
+			m_out_of_live = true;
+		}
 	}
 
 	void App::UpdateFrame()
@@ -223,6 +281,7 @@ namespace Engine
 
 		// Update code goes here
 		//
+		ManageInput();
 		UpdateEntity();
 		double endTime = m_timer->GetElapsedTimeInSeconds();
 		double nextTimeFrame = startTime + DESIRED_FRAME_TIME;
@@ -286,12 +345,33 @@ namespace Engine
 		}
 	}
 
+	void App::RenderLive()
+	{
+		float LC_size_factor = 0.4f;
+		float LC_half_width = (float)m_width / 2.0f;
+		float LC_half_height = (float)m_height / 2.0f;
+		glLoadIdentity();
+		glTranslatef(LC_half_width, LC_half_height, 0.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		for (int y = 0; y < m_live; y++)
+		{
+			glBegin(GL_LINE_LOOP);
+			for (int x = 0; x < m_live_points.size(); x++)
+			{
+				glVertex2f(LC_size_factor*m_live_points[x].x - 30 * (y + 1),
+					LC_size_factor*m_live_points[x].y - 20);
+			}
+			glEnd();
+		}
+	}
+
 	void App::Render()
 	{
 		glClearColor(stats.red, stats.green, stats.blue, stats.alpha);
 		glClear(GL_COLOR_BUFFER_BIT);
 		RenderEntity();
-		if (frame)
+		RenderLive();
+		if (m_frame)
 		{
 			FrameRender();
 		}
@@ -377,6 +457,29 @@ namespace Engine
 		return true;
 	}
 
+	bool App::TTFInit()
+	{
+		if (TTF_Init() == -1) {
+			SDL_Log("TTF_Init: %s\n", TTF_GetError());
+			return false;
+		}
+		
+		SDL_version compile_version;
+		const SDL_version *link_version = TTF_Linked_Version();
+		SDL_TTF_VERSION(&compile_version);
+
+		SDL_Log("compiled with SDL_ttf version: %d.%d.%d\n",
+			compile_version.major,
+			compile_version.minor,
+			compile_version.patch);
+
+		SDL_Log("running with SDL_ttf version: %d.%d.%d\n",
+			link_version->major,
+			link_version->minor,
+			link_version->patch);
+		return true;
+	}
+
 	void App::CleanupSDL()
 	{
 		// Cleanup
@@ -385,6 +488,8 @@ namespace Engine
 		SDL_DestroyWindow(m_mainWindow);
 
 		SDL_Quit();
+
+		TTF_Quit();
 	}
 
 	void App::EntityCleaner()
@@ -447,6 +552,7 @@ namespace Engine
 		if (LC_distance <= m_player->GetEntityRadius() + m_asteroid[asteroid_position]->GetEntityRadius())
 		{
 			m_player->dead = true;
+			m_live--;
 			//check asteroid size is different from small
 			if (m_asteroid[asteroid_position]->GetSize() != 2)
 			{
@@ -515,6 +621,10 @@ namespace Engine
 			{
 				break;
 			}
+		}
+		if (m_asteroid.size() <= 0)
+		{
+			m_clear_screen = true;
 		}
 	}
 
@@ -586,10 +696,17 @@ namespace Engine
 	void App::LoadEntity()
 	{
 		//Load game initial state
-		debug = false;
-		frame = false;
+		m_debug = false;
+		m_frame = false;
+		m_clear_screen = false;
+		m_out_of_live = false;
 		m_player = new Player();
-		GenerateAsteroid();
+		m_asteroids_count = 1;
+		m_live = 3;
+		for (int x = 0; x < m_asteroids_count; x++)
+		{
+			GenerateAsteroid();
+		}
 		for (int x = 0; x < FRAME_LIMIT; x++)
 		{
 			m_frames[x] = Vector2((float)x, 0.0f);

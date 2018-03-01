@@ -1,6 +1,6 @@
 // OpenGL includes
 #include <GL/glew.h>
-#include <SDL2/SDL_opengl.h>
+#include <SDL_opengl.h>
 #include "Player.hpp"
 #include "Color.h"
 
@@ -74,6 +74,11 @@ void Player::RotateRight()
 {
 	m_angle_degree -= ROTATION_ANGLE;
 	m_math_master.AngleNormalizeDegree(m_angle_degree);
+}
+
+std::vector<Vector2> Player::GetShipPoints()
+{
+	return m_figure_points;
 }
 
 Player::Player()
