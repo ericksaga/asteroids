@@ -49,12 +49,12 @@ void Player::Thruster_Render()
 	glEnd();
 }
 
-void Player::Update(const int w_width, const int w_height, const float delta_time)
+void Player::Update(const float delta_time)
 {	
 	m_origin += delta_time * m_speed;
 	m_speed -= (1.0f / m_mass)*m_speed;
 	
-	Entity::Update(w_width, w_height, delta_time);
+	Entity::Update(delta_time);
 }
 
 void Player::MoveForward()

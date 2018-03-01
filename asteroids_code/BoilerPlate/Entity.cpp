@@ -10,23 +10,31 @@ Entity::Entity()
 	m_debugging = false;
 }
 
-void Entity::Warp(const int w_width, const int w_height)
+void Entity::UpdateWarp(const int screen_width, const int screen_height)
 {
-	if (m_origin.x >= w_width / 2)
+	m_width = screen_width;
+	m_height = screen_height;
+}
+
+void Entity::Warp()
+{
+	float LC_half_width = m_width / 2.0;
+	float LC_half_height = m_height / 2.0;
+	if (m_origin.x >= LC_half_width)
 	{
-		m_origin.x += -w_width;
+		m_origin.x += -m_width;
 	}
-	if (m_origin.x <= -w_width / 2)
+	if (m_origin.x <= -LC_half_width)
 	{
-		m_origin.x += w_width;
+		m_origin.x += m_width;
 	}
-	if (m_origin.y >= w_height / 2)
+	if (m_origin.y >= LC_half_height)
 	{
-		m_origin.y += -w_height;
+		m_origin.y += -m_height;
 	}
-	if (m_origin.y <= -w_height / 2)
+	if (m_origin.y <= -LC_half_height)
 	{
-		m_origin.y += w_height;
+		m_origin.y += m_height;
 	}
 }
 
@@ -36,10 +44,10 @@ void Entity::MoveForward()
 	m_origin += Vector2(-SPEED * sin(LC_angle_radian), SPEED * cos(LC_angle_radian));
 }
 
-void Entity::Update(const int w_width, const int w_height, const float delta_time)
+void Entity::Update(const float delta_time)
 {
 	m_math_master.AngleNormalizeDegree(m_angle_degree);
-	Warp(w_width, w_height);
+	Warp();
 }
 
 void Entity::Render()

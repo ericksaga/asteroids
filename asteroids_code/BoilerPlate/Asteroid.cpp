@@ -99,11 +99,11 @@ void Asteroid::MoveForward(const float delta_time)
 	m_origin += delta_time * Vector2(LC_speed_x, LC_speed_y);
 }
 
-void Asteroid::Update(const int w_width, const int w_height, const float delta_time)
+void Asteroid::Update(const float delta_time)
 {
 	MoveForward(delta_time);
 	m_auto_rotate += ASTEROID_ROTATION;
-	Entity::Update(w_width, w_height, delta_time);
+	Entity::Update(delta_time);
 	MeasureSizeFactor();
 }
 
@@ -164,20 +164,30 @@ void Asteroid::AssignOrientation(int random_number)
 	m_angle_degree = (float) (random_number % 360);
 }
 
-void Asteroid::AssignPosition(int random_number_x, int random_number_y)
+void Asteroid::AssignPosition(int random_number_x, int random_number_y, int screen_width, int screen_height)
 {
 	/*assing the random position with the values, for it to be more random if the number is even the
 	position is negative, and if it's odd it would be positive*/
+	int LC_minus_factor= rand();
 	float LC_pos_x, LC_pos_y;
-	LC_pos_x = (float)(random_number_x % MAX_SPAWN_POSITION + MIN_SPAWN_POSITION);
-	LC_pos_y = (float)(random_number_y % MAX_SPAWN_POSITION + MIN_SPAWN_POSITION);
 	if (random_number_x % 2 == 0)
 	{
-		LC_pos_x *= -1;
+		LC_pos_x = screen_width/2;
+		LC_pos_y = random_number_y % MAX_SPAWN_POSITION + MIN_SPAWN_POSITION;
 	}
-	if (random_number_y % 2 == 1)
+	else
 	{
+		LC_pos_x = random_number_x % MAX_SPAWN_POSITION + MIN_SPAWN_POSITION;
+		LC_pos_y = screen_height/2;
+	}
+	if (LC_minus_factor % 2 == 0)
+	{
+		LC_pos_x *= -1;
 		LC_pos_y *= -1;
+	}
+	if (random_number_y % 2 == 0)
+	{
+		LC_pos_x *= -1;
 	}
 	m_origin = Vector2(LC_pos_x, LC_pos_y);
 }

@@ -76,6 +76,7 @@ namespace Engine
 		void FrameRender					( );
 		void EntityCleaner					( );
 		void BulletCleanUp					( );
+		void UpdateWarp						( );
 		void DebugPlayerCollision			(int);
 		void DebugBulletCollision			(int);
 		bool PlayerCollision				(int);

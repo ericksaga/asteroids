@@ -8,9 +8,9 @@
 #include <GL/glew.h>
 #include <SDL_opengl.h>
 #include <SDL.h>
-
+//font include
 #include <SDL_ttf.h>
-
+//sound include
 #include <irrKlang.h>
 
 irrklang::ISoundEngine *SoundEngine = irrklang::createIrrKlangDevice();
@@ -34,6 +34,7 @@ namespace Engine
 		m_state = GameState::UNINITIALIZED;
 		m_lastFrameTime = m_timer->GetElapsedTimeInSeconds();
 		LoadEntity();
+		SoundEngine->setSoundVolume(0.5f);
 		m_live_points = m_player->GetShipPoints();
 	}
 
@@ -41,6 +42,7 @@ namespace Engine
 	{
 		CleanupSDL();
 		EntityCleaner();
+		SoundEngine->removeAllSoundSources();
 	}
 
 	void App::Execute()
@@ -173,7 +175,6 @@ namespace Engine
 			if (!m_player->dead)
 			{
 				m_bullet.push_back(new Bullet(m_player->GetEntityAngle(), m_player));
-				SoundEngine->play2D("sounds/explosion.wav");
 			}
 			break;
 		case SDL_SCANCODE_F:
@@ -190,6 +191,8 @@ namespace Engine
 		case SDL_SCANCODE_H:
 			EntityCleaner();
 			LoadEntity();
+			SoundEngine->stopAllSounds();
+			SoundEngine->removeAllSoundSources();
 			break;
 		case SDL_SCANCODE_W:
 			m_manager.SetW(false);
@@ -222,20 +225,34 @@ namespace Engine
 		}
 	}
 
+	void App::UpdateWarp()
+	{
+		m_player->UpdateWarp(m_width, m_height);
+		for (int x = 0; x < m_asteroid.size(); x++)
+		{
+			m_asteroid[x]->UpdateWarp(m_width, m_height);
+		}
+		for (int x = 0; x < m_bullet.size(); x++)
+		{
+			m_bullet[x]->UpdateWarp(m_width, m_height);
+		}
+	}
+
 	void App::UpdateEntity()
 	{
-		m_player->Update(m_width, m_height, (float)m_delta_time);
+		UpdateWarp();
+		m_player->Update((float)m_delta_time);
 		//update the player debugging state
 		m_player->ChangeDebuggingState(m_debug);
 		for (int x = 0; x < m_asteroid.size();x++)
 		{
-			m_asteroid[x]->Update(m_width, m_height, (float)m_delta_time);
+			m_asteroid[x]->Update((float)m_delta_time);
 			//update the asteroid debugging state
 			m_asteroid[x]->ChangeDebuggingState(m_debug);
 		}
 		for (int x = 0; x < m_bullet.size(); x++)
 		{
-			m_bullet[x]->Update(m_width, m_height, (float)m_delta_time);
+			m_bullet[x]->Update((float)m_delta_time);
 			//update the bullet debugging state
 			m_bullet[x]->ChangeDebuggingState(m_debug);
 		}
@@ -259,9 +276,11 @@ namespace Engine
 				GenerateAsteroid();
 			}
 		}
-		if (m_live <= 0)
+		if (m_live <= 0 && !m_out_of_live)
 		{
 			m_out_of_live = true;
+			SoundEngine->play2D("sounds/quacksoundeffect.mp3",GL_TRUE);
+
 		}
 	}
 
@@ -534,7 +553,7 @@ namespace Engine
 		//generate a random angle and postion for the asteroid
 		m_asteroid.push_back(new Asteroid());
 		m_asteroid[m_asteroid.size() - 1]->AssignOrientation(rand());
-		m_asteroid[m_asteroid.size() - 1]->AssignPosition(rand(), rand());
+		m_asteroid[m_asteroid.size() - 1]->AssignPosition(rand(), rand(), m_width, m_height);
 	}
 
 	void App::GenerateAsteroidWithPosition(Vector2 position, int state)
@@ -615,10 +634,12 @@ namespace Engine
 		{
 			if (BulletCollision(pos))
 			{
+				SoundEngine->play2D("sounds/explosion.wav");
 				break;
 			}
 			if (!m_player->dead && PlayerCollision(pos))
 			{
+				SoundEngine->play2D("sounds/megamandeathsound.mp3");
 				break;
 			}
 		}

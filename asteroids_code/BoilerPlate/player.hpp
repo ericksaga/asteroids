@@ -13,7 +13,7 @@ public:
 	void RotateRight();
 	std::vector<Vector2> GetShipPoints();
 	//-@override
-	void Update(const int, const int, const float);
+	void Update(const float);
 	void MoveForward();
 	void Render();
 	//@-

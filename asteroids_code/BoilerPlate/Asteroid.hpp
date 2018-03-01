@@ -17,7 +17,7 @@ public:
 	void ChangeSize();
 	int GetSize();
 	void DebugLine(const Vector2);
-	void AssignPosition(int, int);
+	void AssignPosition(int, int, int, int);
 	bool Colide();
 	void AssignColide(bool);
 	bool CloseToShip();
@@ -26,7 +26,7 @@ public:
 	void CheckBulletDistance(bool);
 	//@-override
 	void MoveForward(const float);
-	void Update(const int, const int, const float);
+	void Update(const float);
 	void Render();
 	void AssignOrientation(int);
 	void AssignPosition(Vector2);

@@ -38,10 +38,10 @@ void Bullet::MoveForward(const float delta_time)
 	m_origin += delta_time * Vector2(LC_speed_x, LC_speed_y);
 }
 
-void Bullet::Update(const int w_width, const int w_height, const float delta_time)
+void Bullet::Update(const float delta_time)
 {
 	MoveForward(delta_time);
-	Entity::Update(w_width, w_height, delta_time);
+	Entity::Update(delta_time);
 	m_screen_time++;
 }
 
