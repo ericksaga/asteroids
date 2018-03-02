@@ -295,6 +295,7 @@ namespace Engine
 		BulletCleanUp();
 		if (m_clear_screen)
 		{
+			SoundEngine->play2D("sounds/reloadsound.mp3");
 			m_clear_screen = false;
 			m_asteroids_count++;
 			m_missile_counter++;
@@ -324,6 +325,7 @@ namespace Engine
 	{
 		if (m_limit - m_score <= 0)
 		{
+			SoundEngine->play2D("sounds/coinsound.mp3");
 			m_limit += NEW_LIVE_LIMIT;
 			m_live++;
 		}
@@ -953,6 +955,7 @@ namespace Engine
 		SoundEngine->addSoundSourceFromFile("sounds/megamandeathsound.mp3");
 		SoundEngine->addSoundSourceFromFile("sounds/quacksoundeffect.mp3");
 		SoundEngine->addSoundSourceFromFile("sounds/coinsound.mp3");
+		SoundEngine->addSoundSourceFromFile("sounds/reloadsound.mp3");
 	}
 
 }

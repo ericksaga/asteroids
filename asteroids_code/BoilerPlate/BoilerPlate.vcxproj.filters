@@ -112,5 +112,81 @@
     <Filter Include="ex_utilities\Source files">
       <UniqueIdentifier>{bbc15ae7-b2d5-48de-859c-cbfbede6e424}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sounds">
+      <UniqueIdentifier>{9e5408e2-4288-407b-8568-f4f77ee04cf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fonts">
+      <UniqueIdentifier>{3b5e6957-c982-4f79-b192-ee6259639e3d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="sounds\bangLarge.wav">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\bangMedium.wav">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\bangSmall.wav">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\beat1.wav">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\beat2.wav">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\coinsound.mp3">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\explosion.wav">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\extraShip.wav">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\fire.wav">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\megamandeathsound.mp3">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\quacksoundeffect.mp3">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\reloadsound.mp3">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\saucerBig.wav">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\saucerSmall.wav">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\thrust.wav">
+      <Filter>sounds</Filter>
+    </Media>
+    <Media Include="sounds\Torpedosound.mp3">
+      <Filter>sounds</Filter>
+    </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="ASTER.TTF">
+      <Filter>fonts</Filter>
+    </Font>
+    <Font Include="font.ttf">
+      <Filter>fonts</Filter>
+    </Font>
+    <Font Include="Hyperspace.ttf">
+      <Filter>fonts</Filter>
+    </Font>
+    <Font Include="Martel-Heavy.ttf">
+      <Filter>fonts</Filter>
+    </Font>
+    <Font Include="MOBYB___.TTF">
+      <Filter>fonts</Filter>
+    </Font>
+    <Font Include="Vectorb.ttf">
+      <Filter>fonts</Filter>
+    </Font>
   </ItemGroup>
 </Project>
