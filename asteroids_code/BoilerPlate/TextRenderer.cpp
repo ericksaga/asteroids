@@ -1,41 +1,29 @@
 #include "TextRenderer.hpp"
 
 
-GLTextRenderer::GLTextRenderer()
+TextRenderer::TextRenderer()
 {
 
 
 }
+bool TextRenderer::InitFont() {
 
-GLTextRenderer::GLTextRenderer(TTF_Font* newFont, SDL_Color newColor)
-{
-	font = newFont;
-	color = newColor;
+	bool result = true;
 
-}
-
-void GLTextRenderer::TextRenderInit()
-{
 	if (TTF_Init() == -1) {
 		SDL_Log("TTF_Init: %s\n", TTF_GetError());
-
+		result = false;
 	}
-	SDL_version compile_version;
-	const SDL_version *link_version = TTF_Linked_Version();
-	SDL_TTF_VERSION(&compile_version);
 
-	SDL_Log("compiled with SDL_ttf version: %d.%d.%d\n",
-		compile_version.major,
-		compile_version.minor,
-		compile_version.patch);
-
-	SDL_Log("running with SDL_ttf version: %d.%d.%d\n",
-		link_version->major,
-		link_version->minor,
-		link_version->patch);
+	return result;
 }
 
-unsigned int GLTextRenderer::power_two_floor(unsigned int val)
+TextRenderer::TextRenderer(SDL_Color newColor)
+{
+	font = TTF_OpenFont("fonts/font.ttf", 60);
+}
+
+unsigned int TextRenderer::power_two_floor(unsigned int val)
 {
 	unsigned int power = 2, nextVal = power * 2;
 	while ((nextVal *= 2) <= val)
@@ -43,15 +31,11 @@ unsigned int GLTextRenderer::power_two_floor(unsigned int val)
 	return power * 2;
 }
 
-void GLTextRenderer::RenderText(std::string message, SDL_Color color, float x, float y, int size)
+void TextRenderer::RenderText(std::string message, SDL_Color color, float x, float y, int size)
 {
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	glLoadIdentity();
-	glTranslatef(x, y, 0.0f);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glTranslatef(x, y, 0.f);
 
 	SDL_Surface *surface;
 
@@ -87,10 +71,10 @@ void GLTextRenderer::RenderText(std::string message, SDL_Color color, float x, f
 
 	//Draw the OpenGL texture as a Quad
 	glBegin(GL_QUADS); {
-		glTexCoord2d(0.0, 1.0); glVertex3f(0.0f, 0.0f, 0.0f);
-		glTexCoord2d(1.0, 1.0); glVertex3f(0.0f + surface->w, 0.0f, 0.0f);
-		glTexCoord2d(1.0, 0.0); glVertex3f(0.0f + surface->w, 0.0f + surface->h, 0.0f);
-		glTexCoord2d(0.0, 0.0); glVertex3f(0.0f, 0.0f + surface->h, 0.0f);
+		glTexCoord2d(0.0f, 1.0f); glVertex3f(0.0f, 0.0f, 0.0f);
+		glTexCoord2d(1.0f, 1.0f); glVertex3f(0.0f + surface->w, 0.0f, 0.0f);
+		glTexCoord2d(1.0f, 0.0f); glVertex3f(0.0f + surface->w, 0.0f + surface->h, 0.0f);
+		glTexCoord2d(0.0f, 0.0f); glVertex3f(0.0f, 0.0f + surface->h, 0.0f);
 	} glEnd();
 	glDisable(GL_TEXTURE_2D);
 

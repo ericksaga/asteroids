@@ -27,8 +27,12 @@ namespace Engine
 		srand((int)time(0));
 		m_state = GameState::UNINITIALIZED;
 		m_lastFrameTime = m_timer->GetElapsedTimeInSeconds();
+		m_render_text->InitFont();
+		SetFontColor(225, 225, 225, 225);
+		m_render_text = new TextRenderer(m_font_color);
+
+		EngineStart();
 		LoadEntity();
-		SoundEngine->setSoundVolume(0.5f);
 		m_live_points = m_player->GetShipPoints();
 		m_missile_points = LC_get_points.GetMissilePoints();
 	}
@@ -38,6 +42,7 @@ namespace Engine
 		CleanupSDL();
 		EntityCleaner();
 		SoundEngine->removeAllSoundSources();
+		delete m_render_text;
 	}
 
 	void App::Execute()
@@ -70,7 +75,7 @@ namespace Engine
 	{
 		// Init the external dependencies
 		//
-		bool success = SDLInit() && GlewInit() && TTFInit();
+		bool success = SDLInit() && GlewInit();
 		if (!success)
 		{
 			m_state = GameState::INIT_FAILED;
@@ -85,7 +90,6 @@ namespace Engine
 		// Change game state
 		//
 		m_state = GameState::INIT_SUCCESSFUL;
-
 		return true;
 	}
 
@@ -186,7 +190,7 @@ namespace Engine
 		case SDL_SCANCODE_M:
 			if (!m_respawn_player && m_missile_counter > 0)
 			{
-				SoundEngine->play2D("sounds/Torpedosound.mp3");
+				SoundEngine->play2D("sounds/Torpedosound.mp3");	
 				m_missile.push_back(new Missile(m_player->GetEntityAngle(), m_player));
 				m_missile_counter--;
 			}
@@ -302,8 +306,7 @@ namespace Engine
 		if (m_live <= 0 && !m_out_of_live)
 		{
 			m_out_of_live = true;
-			SoundEngine->play2D("sounds/quacksoundeffect.mp3",GL_TRUE);
-
+			SoundEngine->play2D("sounds/quacksoundeffect.mp3", GL_TRUE);
 		}
 	}
 
@@ -449,6 +452,7 @@ namespace Engine
 	{
 		glClearColor(stats.red, stats.green, stats.blue, stats.alpha);
 		glClear(GL_COLOR_BUFFER_BIT);
+		RenderScore();
 		RenderEntity();
 		RenderLive();
 		RenderMissile();
@@ -570,7 +574,7 @@ namespace Engine
 
 		SDL_Quit();
 
-		TTF_Quit();
+		//TTF_Quit();
 	}
 
 	void App::EntityCleaner()
@@ -679,10 +683,12 @@ namespace Engine
 					if (m_asteroid[asteroid_position]->GetSize() == 4)
 					{
 						SoundEngine->play2D("sounds/bangLarge.wav");
+						m_score += BIG_ASTEROID_POINT;
 					}
 					else
 					{
 						SoundEngine->play2D("sounds/bangMedium.wav");
+						m_score += MEDIUM_ASTEROID_POINT;
 					}
 					m_asteroid[asteroid_position]->ChangeSize();
 					int LC_state = m_asteroid[asteroid_position]->GetSize();
@@ -695,6 +701,7 @@ namespace Engine
 					delete m_asteroid[asteroid_position];
 					m_asteroid.erase(m_asteroid.begin() + asteroid_position);
 					SoundEngine->play2D("sounds/bangSmall.wav");
+					m_score += SMALL_ASTEROID_POINT;
 				}
 				//only one collision is necesary in the player or bullet case
 				return true;
@@ -716,18 +723,20 @@ namespace Engine
 				if (m_asteroid[asteroid_position]->GetSize() == 4)
 				{
 					SoundEngine->play2D("sounds/bangLarge.wav");
+					m_score += BIG_ASTEROID_POINT + 2 * MEDIUM_ASTEROID_POINT + 4 * SMALL_ASTEROID_POINT;
 				}
 				else if(m_asteroid[asteroid_position]->GetSize() == 3)
 				{
 					SoundEngine->play2D("sounds/bangMedium.wav");
+					m_score += MEDIUM_ASTEROID_POINT + 2 * SMALL_ASTEROID_POINT;
 				}
 				else
 				{
 					SoundEngine->play2D("sounds/bangSmall.wav");
+					m_score += SMALL_ASTEROID_POINT;
 				}
 				delete m_asteroid[asteroid_position];
 				m_asteroid.erase(m_asteroid.begin() + asteroid_position);
-				
 			
 				//only one collision is necesary in the player or bullet case
 				return true;
@@ -872,6 +881,7 @@ namespace Engine
 		m_asteroids_count = 0;
 		m_live = 3;
 		m_missile_counter = 2;
+		m_score = 0;
 		for (int x = 0; x < FRAME_LIMIT; x++)
 		{
 			m_frames[x] = Vector2((float)x, 0.0f);
@@ -879,4 +889,43 @@ namespace Engine
 		m_frame_pos = 0;
 		m_delta_time = DESIRED_FRAME_RATE;
 	}
+
+	void App::SetFontColor(int r, int g, int b, int a)
+	{
+		m_font_color.r = r;
+		m_font_color.g = g;
+		m_font_color.b = b;
+		m_font_color.a = a;
+	}
+
+	void App::RenderScore() {
+
+		//Score Position
+		float xAxisScore = 0.0f;
+		float yAxisScore = (m_height / 2) - 70.0f;
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		m_render_text->RenderText(std::to_string(m_score), m_font_color, xAxisScore, yAxisScore, 36);
+	}
+
+	void App::EngineStart()
+	{
+		LoadSounds();
+		SoundEngine->setSoundVolume(0.5f);
+	}
+
+	void App::LoadSounds()
+	{
+		SoundEngine->addSoundSourceFromFile("sounds/thrust.wav");
+		SoundEngine->addSoundSourceFromFile("sounds/Torpedosound.mp3");
+		SoundEngine->addSoundSourceFromFile("sounds/bangLarge.wav");
+		SoundEngine->addSoundSourceFromFile("sounds/bangMedium.wav");
+		SoundEngine->addSoundSourceFromFile("sounds/bangSmall.wav");
+		SoundEngine->addSoundSourceFromFile("sounds/fire.wav");
+		SoundEngine->addSoundSourceFromFile("sounds/megamandeathsound.mp3");
+		SoundEngine->addSoundSourceFromFile("sounds/quacksoundeffect.mp3");
+		SoundEngine->addSoundSourceFromFile("sounds/coinsound.mp3");
+	}
+
 }

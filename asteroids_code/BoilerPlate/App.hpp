@@ -15,11 +15,13 @@
 #include "Bullet.hpp"
 #include "Missile.hpp"
 #include "InputManager.hpp"
+#include "TextRenderer.hpp"
 
 const int FRAME_LIMIT = 10;
 const int BIG_ASTEROID_POINT = 2;
 const int MEDIUM_ASTEROID_POINT = 3;
 const int SMALL_ASTEROID_POINT = 5;
+const int NEW_LIVE_LIMIT = 500;
 const float FRAME_SCALE_Y = 10000.0f;
 const float FRAME_SCALE_X = 20.0f;
 
@@ -81,6 +83,10 @@ namespace Engine
 		void EntityCleaner					( );
 		void BulletCleanUp					( );
 		void UpdateWarp						( );
+		void LoadSounds						( );
+		void SetFontColor					(int, int, int, int);
+		void EngineStart					( );
+		void RenderScore					( );
 		void DebugPlayerCollision			(int);
 		void DebugBulletCollision			(int);
 		void DebugMissileCollision			(int);
@@ -117,7 +123,11 @@ namespace Engine
 		int									m_live;
 		int									m_missile_counter;
 		int									m_asteroids_count;
+		int									m_score;
 		double								m_delta_time;
+		TTF_Font*							m_font;
+		SDL_Color							m_font_color;
+		TextRenderer*						m_render_text;
 	};
 }
 #endif /* GAME_HPP */

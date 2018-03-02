@@ -2,16 +2,15 @@
 #include "GLIncludes.hpp"
 #include <string>
 
-class GLTextRenderer
+class TextRenderer
 {
 
 public:
-	GLTextRenderer();
-	GLTextRenderer(TTF_Font*, SDL_Color);
-	void TextRenderInit();
+	TextRenderer();
+	TextRenderer(SDL_Color);
 	void RenderText(std::string message, SDL_Color color, float x, float y, int size);
 	unsigned int power_two_floor(unsigned int);
-
+	bool InitFont();
 
 private:
 
