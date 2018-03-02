@@ -84,9 +84,11 @@ namespace Engine
 		void BulletCleanUp					( );
 		void UpdateWarp						( );
 		void LoadSounds						( );
-		void SetFontColor					(int, int, int, int);
 		void EngineStart					( );
 		void RenderScore					( );
+		void RenderDeadScreen				( );
+		void UpdateLive						( );
+		void SetFontColor					(int, int, int, int);
 		void DebugPlayerCollision			(int);
 		void DebugBulletCollision			(int);
 		void DebugMissileCollision			(int);
@@ -124,6 +126,7 @@ namespace Engine
 		int									m_missile_counter;
 		int									m_asteroids_count;
 		int									m_score;
+		int									m_limit;
 		double								m_delta_time;
 		TTF_Font*							m_font;
 		SDL_Color							m_font_color;

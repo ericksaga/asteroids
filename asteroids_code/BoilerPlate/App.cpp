@@ -320,6 +320,15 @@ namespace Engine
 		}
 	}
 
+	void App::UpdateLive()
+	{
+		if (m_limit - m_score <= 0)
+		{
+			m_limit += NEW_LIVE_LIMIT;
+			m_live++;
+		}
+	}
+
 	void App::Update()
 	{
 		double startTime = m_timer->GetElapsedTimeInSeconds();
@@ -330,6 +339,7 @@ namespace Engine
 		{
 			ManageInput();
 			UpdateEntity();
+			UpdateLive();
 			if (m_player->dead)
 			{
 				delete m_player;
@@ -448,11 +458,38 @@ namespace Engine
 		}
 	}
 
+	void App::RenderScore() 
+	{
+		float xAxisScore = 0.0f;
+		float yAxisScore = (m_height / 2) - 70.0f;
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		m_render_text->RenderText(std::to_string(m_score), m_font_color, xAxisScore, yAxisScore, 36);
+	}
+
+	void App::RenderDeadScreen()
+	{
+		if (m_out_of_live)
+		{
+			float xAxisScore = -300.0f;
+			float yAxisScore = 0.0f;
+
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			m_render_text->RenderText("You Died, press H to revive", m_font_color, xAxisScore, yAxisScore, 36);
+		}
+	}
+
 	void App::Render()
 	{
 		glClearColor(stats.red, stats.green, stats.blue, stats.alpha);
 		glClear(GL_COLOR_BUFFER_BIT);
 		RenderScore();
+		if (m_out_of_live)
+		{
+			RenderDeadScreen();
+		}
 		RenderEntity();
 		RenderLive();
 		RenderMissile();
@@ -882,6 +919,7 @@ namespace Engine
 		m_live = 3;
 		m_missile_counter = 2;
 		m_score = 0;
+		m_limit = NEW_LIVE_LIMIT;
 		for (int x = 0; x < FRAME_LIMIT; x++)
 		{
 			m_frames[x] = Vector2((float)x, 0.0f);
@@ -896,17 +934,6 @@ namespace Engine
 		m_font_color.g = g;
 		m_font_color.b = b;
 		m_font_color.a = a;
-	}
-
-	void App::RenderScore() {
-
-		//Score Position
-		float xAxisScore = 0.0f;
-		float yAxisScore = (m_height / 2) - 70.0f;
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		m_render_text->RenderText(std::to_string(m_score), m_font_color, xAxisScore, yAxisScore, 36);
 	}
 
 	void App::EngineStart()
