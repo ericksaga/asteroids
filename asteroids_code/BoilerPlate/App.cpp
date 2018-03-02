@@ -4,14 +4,7 @@
 
 #include "Palet.h"
 
-// OpenGL includes
-#include <GL/glew.h>
-#include <SDL_opengl.h>
-#include <SDL.h>
-//font include
-#include <SDL_ttf.h>
-//sound include
-#include <irrKlang.h>
+#include "GLIncludes.hpp"
 
 irrklang::ISoundEngine *SoundEngine = irrklang::createIrrKlangDevice();
 
@@ -30,12 +23,14 @@ namespace Engine
 		, m_timer(new TimeManager)
 		, m_mainWindow(nullptr)
 	{
+		Missile LC_get_points;
 		srand((int)time(0));
 		m_state = GameState::UNINITIALIZED;
 		m_lastFrameTime = m_timer->GetElapsedTimeInSeconds();
 		LoadEntity();
 		SoundEngine->setSoundVolume(0.5f);
 		m_live_points = m_player->GetShipPoints();
+		m_missile_points = LC_get_points.GetMissilePoints();
 	}
 
 	App::~App()
@@ -164,17 +159,11 @@ namespace Engine
 				m_player->dead = false;
 			}
 			break;
-		case SDL_SCANCODE_T:
-			if (!m_out_of_live && m_player->dead)
-			{
-				delete m_player;
-				m_player = new Player();
-			}
-			break;
 		case SDL_SCANCODE_SPACE:
-			if (!m_player->dead)
+			if (!m_respawn_player && !m_pause)
 			{
 				m_bullet.push_back(new Bullet(m_player->GetEntityAngle(), m_player));
+				SoundEngine->play2D("sounds/fire.wav");
 			}
 			break;
 		case SDL_SCANCODE_F:
@@ -193,6 +182,24 @@ namespace Engine
 			LoadEntity();
 			SoundEngine->stopAllSounds();
 			SoundEngine->removeAllSoundSources();
+			break;
+		case SDL_SCANCODE_M:
+			if (!m_respawn_player && m_missile_counter > 0)
+			{
+				SoundEngine->play2D("sounds/Torpedosound.mp3");
+				m_missile.push_back(new Missile(m_player->GetEntityAngle(), m_player));
+				m_missile_counter--;
+			}
+			break;
+		case SDL_SCANCODE_P:
+			if (!m_pause)
+			{
+				m_pause = true;
+			}
+			else
+			{
+				m_pause = false;
+			}
 			break;
 		case SDL_SCANCODE_W:
 			m_manager.SetW(false);
@@ -214,6 +221,7 @@ namespace Engine
 		if (m_manager.GetW())
 		{
 			m_player->MoveForward();
+			SoundEngine->play2D("sounds/thrust.wav");
 		}
 		if (m_manager.GetA())
 		{
@@ -236,10 +244,18 @@ namespace Engine
 		{
 			m_bullet[x]->UpdateWarp(m_width, m_height);
 		}
+		for (int x = 0; x < m_missile.size(); x++)
+		{
+			m_missile[x]->UpdateWarp(m_width, m_height);
+		}
 	}
 
 	void App::UpdateEntity()
 	{
+		if (!m_player->GetInmortal())
+		{
+			m_respawn_player = false;
+		}
 		UpdateWarp();
 		m_player->Update((float)m_delta_time);
 		//update the player debugging state
@@ -256,6 +272,12 @@ namespace Engine
 			//update the bullet debugging state
 			m_bullet[x]->ChangeDebuggingState(m_debug);
 		}
+		for (int x = 0; x < m_missile.size(); x++)
+		{
+			m_missile[x]->Update((float)m_delta_time);
+			//update the missile debugging state
+			m_missile[x]->ChangeDebuggingState(m_debug);
+		}
 		//check collisions on normal gameplay
 		if (!m_debug && !m_out_of_live)
 		{
@@ -271,6 +293,7 @@ namespace Engine
 		{
 			m_clear_screen = false;
 			m_asteroids_count++;
+			m_missile_counter++;
 			for (int x = 0; x < m_asteroids_count; x++)
 			{
 				GenerateAsteroid();
@@ -300,8 +323,21 @@ namespace Engine
 
 		// Update code goes here
 		//
-		ManageInput();
-		UpdateEntity();
+		if (!m_pause)
+		{
+			ManageInput();
+			UpdateEntity();
+			if (m_player->dead)
+			{
+				delete m_player;
+				m_player = new Player();
+				m_player->ActivateInmortal((float)startTime);
+			}
+			if (m_respawn_player)
+			{
+				m_player->CheckInmortal((float)startTime);
+			}
+		}
 		double endTime = m_timer->GetElapsedTimeInSeconds();
 		double nextTimeFrame = startTime + DESIRED_FRAME_TIME;
 		
@@ -352,6 +388,7 @@ namespace Engine
 			if (m_asteroid[x]->CloseToBullet())
 			{
 				DebugBulletCollision(x);
+				DebugMissileCollision(x);
 			}
 			//clear line and color marks
 			m_asteroid[x]->CheckShipDistance(false);
@@ -361,6 +398,10 @@ namespace Engine
 		for (int x = 0; x < m_bullet.size(); x++)
 		{
 			m_bullet[x]->Render();
+		}
+		for (int x = 0; x < m_missile.size(); x++)
+		{	
+			m_missile[x]->Render();
 		}
 	}
 
@@ -384,12 +425,33 @@ namespace Engine
 		}
 	}
 
+	void App::RenderMissile()
+	{
+		float LC_size_factor = 1.3f;
+		float LC_half_width = (float)m_width / 2.0f;
+		float LC_half_height = (float)m_height / 2.0f;
+		glLoadIdentity();
+		glTranslatef(-LC_half_width, -LC_half_height, 0.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		for (int y = 0; y < m_missile_counter; y++)
+		{
+			glBegin(GL_LINE_LOOP);
+			for (int x = 0; x < m_missile_points.size(); x++)
+			{
+				glVertex2f(LC_size_factor*m_missile_points[x].x + 15 * (y + 1),
+					LC_size_factor*m_missile_points[x].y + 10);
+			}
+			glEnd();
+		}
+	}
+
 	void App::Render()
 	{
 		glClearColor(stats.red, stats.green, stats.blue, stats.alpha);
 		glClear(GL_COLOR_BUFFER_BIT);
 		RenderEntity();
 		RenderLive();
+		RenderMissile();
 		if (m_frame)
 		{
 			FrameRender();
@@ -523,8 +585,13 @@ namespace Engine
 		{
 			delete m_bullet[x];
 		}
+		for (int x = 0; x < m_missile.size(); x++)
+		{
+			delete m_missile[x];
+		}
 		m_asteroid.clear();
 		m_bullet.clear();
+		m_missile.clear();
 	}
 
 	void App::OnResize(int width, int height)
@@ -609,6 +676,14 @@ namespace Engine
 				{
 					/*if it's different change the size and create a new asteroid in the same position with
 					the same state*/
+					if (m_asteroid[asteroid_position]->GetSize() == 4)
+					{
+						SoundEngine->play2D("sounds/bangLarge.wav");
+					}
+					else
+					{
+						SoundEngine->play2D("sounds/bangMedium.wav");
+					}
 					m_asteroid[asteroid_position]->ChangeSize();
 					int LC_state = m_asteroid[asteroid_position]->GetSize();
 					GenerateAsteroidWithPosition(m_asteroid[asteroid_position]->GetOrigin(),
@@ -619,7 +694,41 @@ namespace Engine
 					//if it's small the asteroids is deleted and remove the asteroid from the vector
 					delete m_asteroid[asteroid_position];
 					m_asteroid.erase(m_asteroid.begin() + asteroid_position);
+					SoundEngine->play2D("sounds/bangSmall.wav");
 				}
+				//only one collision is necesary in the player or bullet case
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool App::MissileCollision(int asteroid_position)
+	{
+		for (int x = 0; x < m_missile.size(); x++)
+		{
+			//get the distance between every bullet and every asteroid on the screen
+			float LC_distance = m_missile[x]->GetOrigin().VectorialDistance(m_asteroid[asteroid_position]->GetOrigin());
+			if (LC_distance <= m_missile[x]->GetEntityRadius() + m_asteroid[asteroid_position]->GetEntityRadius())
+			{
+				//erase the colliding bullet
+				m_missile.erase(m_missile.begin() + x);
+				if (m_asteroid[asteroid_position]->GetSize() == 4)
+				{
+					SoundEngine->play2D("sounds/bangLarge.wav");
+				}
+				else if(m_asteroid[asteroid_position]->GetSize() == 3)
+				{
+					SoundEngine->play2D("sounds/bangMedium.wav");
+				}
+				else
+				{
+					SoundEngine->play2D("sounds/bangSmall.wav");
+				}
+				delete m_asteroid[asteroid_position];
+				m_asteroid.erase(m_asteroid.begin() + asteroid_position);
+				
+			
 				//only one collision is necesary in the player or bullet case
 				return true;
 			}
@@ -632,13 +741,14 @@ namespace Engine
 		//check the collisions with the asteroids for player and bullet
 		for (int pos = 0; pos < m_asteroid.size(); pos++)
 		{
-			if (BulletCollision(pos))
+			if (BulletCollision(pos) || MissileCollision(pos))
 			{
-				SoundEngine->play2D("sounds/explosion.wav");
+				//SoundEngine->play2D("sounds/explosion.wav");
 				break;
 			}
-			if (!m_player->dead && PlayerCollision(pos))
+			if (!m_respawn_player && PlayerCollision(pos))
 			{
+				m_respawn_player = true;
 				SoundEngine->play2D("sounds/megamandeathsound.mp3");
 				break;
 			}
@@ -691,6 +801,29 @@ namespace Engine
 		}
 	}
 
+	void App::DebugMissileCollision(int asteroid_position)
+	{
+		for (int x = 0; x < m_missile.size(); x++)
+		{
+			//get the distance between the bullets and every asteroid on the screen
+			float LC_distance = m_missile[x]->GetOrigin().VectorialDistance(m_asteroid[asteroid_position]->GetOrigin());
+			/*check in a 2 times radius of the player if it's on range the asteroid get marked and
+			render a line between the ship and the asteroid*/
+			if (LC_distance <= 2 * m_missile[x]->GetEntityRadius() + m_asteroid[asteroid_position]->GetEntityRadius())
+			{
+				//mark the bullet and render the line between the colliding bullet and the asteroid
+				m_asteroid[asteroid_position]->CheckBulletDistance(true);
+				//it doesnt render on update, only when called on render
+				m_asteroid[asteroid_position]->DebugLine(m_missile[x]->GetOrigin());
+			}
+			if (LC_distance <= m_missile[x]->GetEntityRadius() + m_asteroid[asteroid_position]->GetEntityRadius())
+			{
+				//marked for red color
+				m_asteroid[asteroid_position]->AssignColide(true);
+			}
+		}
+	}
+
 	void App::DebugCollision()
 	{
 		//check collision on debugging
@@ -698,6 +831,7 @@ namespace Engine
 		{
 			DebugPlayerCollision(pos);
 			DebugBulletCollision(pos);
+			DebugMissileCollision(pos);
 		}
 	}
 
@@ -706,9 +840,20 @@ namespace Engine
 		//cleanup expired bullets
 		for (int x = 0; x < m_bullet.size(); x++)
 		{
-			if (m_bullet[x]->GetScreenTime() >= MAX_SCREEN_TIME)
+			if (m_bullet[x]->GetScreenTime() >= MAX_SCREEN_TIME_BULLETS)
 			{
+				delete m_bullet[x];
 				m_bullet.erase(m_bullet.begin() + x);
+				break;
+			}
+		}
+		//cleanup expired missiles
+		for (int x = 0; x < m_missile.size();x++)
+		{
+			if (m_missile[x]->GetScreenTime() >= MAX_SCREEN_TIME_MISSILES)
+			{
+				delete m_missile[x];
+				m_missile.erase(m_missile.begin() + x);
 				break;
 			}
 		}
@@ -721,13 +866,12 @@ namespace Engine
 		m_frame = false;
 		m_clear_screen = false;
 		m_out_of_live = false;
+		m_pause = false;
+		m_respawn_player = false;
 		m_player = new Player();
-		m_asteroids_count = 1;
+		m_asteroids_count = 0;
 		m_live = 3;
-		for (int x = 0; x < m_asteroids_count; x++)
-		{
-			GenerateAsteroid();
-		}
+		m_missile_counter = 2;
 		for (int x = 0; x < FRAME_LIMIT; x++)
 		{
 			m_frames[x] = Vector2((float)x, 0.0f);

@@ -1,7 +1,5 @@
 #include "Entity.hpp"
-//OpenGL include
-#include <GL/glew.h>
-#include <SDL_opengl.h>
+#include "GLIncludes.hpp"
 
 Entity::Entity()
 {
@@ -18,8 +16,8 @@ void Entity::UpdateWarp(const int screen_width, const int screen_height)
 
 void Entity::Warp()
 {
-	float LC_half_width = m_width / 2.0;
-	float LC_half_height = m_height / 2.0;
+	float LC_half_width = (float)m_width / 2.0f;
+	float LC_half_height = (float)m_height / 2.0f;
 	if (m_origin.x >= LC_half_width)
 	{
 		m_origin.x += -m_width;

@@ -13,12 +13,15 @@
 #include "Player.hpp"
 #include "Asteroid.hpp"
 #include "Bullet.hpp"
+#include "Missile.hpp"
 #include "InputManager.hpp"
 
 const int FRAME_LIMIT = 10;
+const int BIG_ASTEROID_POINT = 2;
+const int MEDIUM_ASTEROID_POINT = 3;
+const int SMALL_ASTEROID_POINT = 5;
 const float FRAME_SCALE_Y = 10000.0f;
 const float FRAME_SCALE_X = 20.0f;
-
 
 namespace Engine
 {
@@ -73,14 +76,17 @@ namespace Engine
 		void UpdateFrame					( );
 		void RenderEntity					( );
 		void RenderLive						( );
+		void RenderMissile					( );
 		void FrameRender					( );
 		void EntityCleaner					( );
 		void BulletCleanUp					( );
 		void UpdateWarp						( );
 		void DebugPlayerCollision			(int);
 		void DebugBulletCollision			(int);
+		void DebugMissileCollision			(int);
 		bool PlayerCollision				(int);
 		bool BulletCollision				(int);
+		bool MissileCollision				(int);
 		/* =============================================================
 		 * MEMBERS
 		 * ============================================================= */
@@ -97,17 +103,21 @@ namespace Engine
 		Player*								m_player;
 		std::vector<Asteroid*>				m_asteroid;
 		std::vector<Bullet*>				m_bullet;
+		std::vector<Missile*>				m_missile;
 		std::vector<Vector2>				m_live_points;
+		std::vector<Vector2>				m_missile_points;
 		Vector2								m_frames[10];
 		bool								m_debug;
 		bool								m_frame;
 		bool								m_clear_screen;
 		bool								m_out_of_live;
+		bool								m_pause;
+		bool								m_respawn_player;
 		int									m_frame_pos;
 		int									m_live;
+		int									m_missile_counter;
 		int									m_asteroids_count;
 		double								m_delta_time;
-
 	};
 }
 #endif /* GAME_HPP */

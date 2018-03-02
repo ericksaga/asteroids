@@ -1,7 +1,5 @@
 #include "Asteroid.hpp"
-//OpenGL include
-#include <GL/glew.h>
-#include <SDL_opengl.h>
+#include "GLIncludes.hpp"
 
 Asteroid::Asteroid()
 {
@@ -172,13 +170,13 @@ void Asteroid::AssignPosition(int random_number_x, int random_number_y, int scre
 	float LC_pos_x, LC_pos_y;
 	if (random_number_x % 2 == 0)
 	{
-		LC_pos_x = screen_width/2;
-		LC_pos_y = random_number_y % MAX_SPAWN_POSITION + MIN_SPAWN_POSITION;
+		LC_pos_x = (float)screen_width/2.0f;
+		LC_pos_y = (float)(random_number_y % MAX_SPAWN_POSITION + MIN_SPAWN_POSITION);
 	}
 	else
 	{
-		LC_pos_x = random_number_x % MAX_SPAWN_POSITION + MIN_SPAWN_POSITION;
-		LC_pos_y = screen_height/2;
+		LC_pos_x = (float)(random_number_x % MAX_SPAWN_POSITION + MIN_SPAWN_POSITION);
+		LC_pos_y = (float)screen_height/2.0f;
 	}
 	if (LC_minus_factor % 2 == 0)
 	{

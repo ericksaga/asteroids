@@ -203,10 +203,12 @@ copy /Y "$(SolutionDir)\Externals\irrKlang-64bit-1.6.0\bin\winx64-visualStudio\i
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MathUtilities.cpp" />
+    <ClCompile Include="Missile.cpp" />
     <ClCompile Include="Palet.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SDLEvent.cpp" />
     <ClCompile Include="stb_image.c" />
+    <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
@@ -218,11 +220,14 @@ copy /Y "$(SolutionDir)\Externals\irrKlang-64bit-1.6.0\bin\winx64-visualStudio\i
     <ClInclude Include="Bullet.hpp" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Entity.hpp" />
+    <ClInclude Include="GLIncludes.hpp" />
     <ClInclude Include="InputManager.hpp" />
     <ClInclude Include="MathUtilities.hpp" />
+    <ClInclude Include="Missile.hpp" />
     <ClInclude Include="Palet.h" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="SDLEvent.hpp" />
+    <ClInclude Include="TextRenderer.hpp" />
     <ClInclude Include="TimeManager.hpp" />
     <ClInclude Include="Vector2.hpp" />
     <ClInclude Include="Vector3.hpp" />

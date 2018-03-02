@@ -3,7 +3,7 @@
 #include "Entity.hpp"
 
 const float BULLET_SPEED = 300.0f;
-const int MAX_SCREEN_TIME = 80;
+const int MAX_SCREEN_TIME_BULLETS = 80;
 
 class Bullet:public Entity
 {

@@ -1,7 +1,5 @@
 #include "Bullet.hpp"
-//OpenGL include
-#include <GL/glew.h>
-#include <SDL_opengl.h>
+#include "GLIncludes.hpp"
 
 Bullet::Bullet()
 {

@@ -1,10 +1,10 @@
 #pragma once
 #include "Color.h"
 
-static struct Palet
+struct Palet
 {
-	Color BlueScreen();
-	Color RedScreen();
-	Color GreenScreen();
-	Color DarkBlueScreen();
+	static Color BlueScreen();
+	static Color RedScreen();
+	static Color GreenScreen();
+	static Color DarkBlueScreen();
 };

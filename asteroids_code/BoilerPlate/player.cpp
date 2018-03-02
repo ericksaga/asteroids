@@ -1,32 +1,35 @@
-// OpenGL includes
-#include <GL/glew.h>
-#include <SDL_opengl.h>
 #include "Player.hpp"
 #include "Color.h"
-
+#include "GLIncludes.hpp"
 
 void Player::Render()
 {
 	//if the player is dead it doesn't get rendered
-	if (!dead)
+
+	glLoadIdentity();
+	glTranslatef(m_origin.x, m_origin.y, 0.0);
+	glRotatef(m_angle_degree, 0.0, 0.0, 1.0);
+	if (m_inmortal_ship)
 	{
-		glLoadIdentity();
-		glTranslatef(m_origin.x, m_origin.y, 0.0);
-		glRotatef(m_angle_degree, 0.0, 0.0, 1.0);
-		glColor3f(1.0f, 1.0f, 1.0f);
-		Ship_Render();
-		//render the thruster when moving
-		if (m_thruster_on)
-		{
-			Thruster_Render();
-			m_thruster_on = false;
-		}
-		//render the circle in debuggoing mode
-		if (m_debugging)
-		{
-			RenderCircle();
-		}
+		glColor3f(1.0f, 0.843f, 0.0f);
 	}
+	else
+	{
+		glColor3f(1.0f, 1.0f, 1.0f);
+	}
+	Ship_Render();
+	//render the thruster when moving
+	if (m_thruster_on)
+	{
+		Thruster_Render();
+		m_thruster_on = false;
+	}
+	//render the circle in debuggoing mode
+	if (m_debugging)
+	{
+		RenderCircle();
+	}
+
 }
 
 void Player::Ship_Render()
@@ -85,10 +88,13 @@ Player::Player()
 {
 	m_origin = Vector2(0.0, 0.0);
 	m_speed = Vector2(0.0, 0.0);
+	m_inmortal_timer = 0;
+	m_start_timer = 0;
 	m_angle_degree = 0.0;
 	m_mass = 10.0;
 	m_radius = 35.0f;
 	dead = false;
+	m_inmortal_ship = false;
 	m_speed = Vector2(0.0, 0.0);
 	m_figure_points.push_back(Vector2(0.0, 30.0));
 	m_figure_points.push_back(Vector2(-7.0, 20.0));
@@ -110,4 +116,26 @@ Player::Player()
 	m_thruster_points.push_back(Vector2(-2.5, -25.0));
 	m_thruster_points.push_back(Vector2(0.0, -35.0));
 	m_thruster_points.push_back(Vector2(2.5, -25.0));
+}
+
+void Player::ActivateInmortal(const float start_timer)
+{
+	m_start_timer = start_timer;
+	m_inmortal_timer = 2;
+	m_inmortal_ship = true;
+}
+
+void Player::CheckInmortal(const float actual_timer)
+{
+	if (actual_timer - m_start_timer >= m_inmortal_timer)
+	{
+		m_inmortal_ship = false;
+		m_inmortal_timer = 0;
+		m_start_timer = 0;
+	}
+}
+
+bool Player::GetInmortal()
+{
+	return m_inmortal_ship;
 }
