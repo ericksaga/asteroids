@@ -107,7 +107,6 @@ namespace Engine
 			m_manager.SetD(true);
 			break;
 		default:			
-			SDL_Log("%S was pressed.", keyBoardEvent.keysym.scancode);
 			break;
 		}
 	}
@@ -179,7 +178,6 @@ namespace Engine
 			{
 				m_frame = true;
 			}
-			SDL_Log("%f was pressed.", m_delta_time);
 			break;
 		case SDL_SCANCODE_H:
 			EntityCleaner();
@@ -592,15 +590,6 @@ namespace Engine
 		const SDL_version *link_version = TTF_Linked_Version();
 		SDL_TTF_VERSION(&compile_version);
 
-		SDL_Log("compiled with SDL_ttf version: %d.%d.%d\n",
-			compile_version.major,
-			compile_version.minor,
-			compile_version.patch);
-
-		SDL_Log("running with SDL_ttf version: %d.%d.%d\n",
-			link_version->major,
-			link_version->minor,
-			link_version->patch);
 		return true;
 	}
 
